@@ -1,0 +1,8 @@
+* text eol=lf
+
+*.html text
+*.json text
+*.md text
+*.ts text
+
+*.png binary

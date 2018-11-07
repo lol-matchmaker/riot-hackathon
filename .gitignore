@@ -1,0 +1,17 @@
+# Downloaded test data and test credentials.
+/testdata
+
+# TypeScript compilation output.
+js/
+
+# Build output.
+dist/
+
+# NPM dependencies.
+node_modules/
+
+# npm garbage.
+npm-debug.log
+
+# Vim.
+*.sw*
