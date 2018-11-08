@@ -2,7 +2,7 @@
   <div id="wrapper">
     <h1>Ohai</h1>
     <div v-if="clientStarted">
-      Good job.
+      <preference-form></preference-form>
     </div>
     <div v-else>
       Please start your League of Legends client.
@@ -11,14 +11,18 @@
 </template>
 
 <script>
-  import { LcuState } from './store';
+  import { store } from './store';
+  import PreferenceForm from './PreferenceForm';
 
   export default {
     name: 'app',
-    store: LcuState,
+    components: {
+      PreferenceForm
+    },
+    store,
     computed: {
       clientStarted: function () {
-        return this.$store.state.started;
+        return this.$store.state.lcuState.started;
       }
     }
   }

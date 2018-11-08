@@ -5,7 +5,7 @@
 import Vue from 'vue';
 
 import App from './app/App.vue';
-import { lcuState } from './app/store';
+import { store } from './app/store';
 
 import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuConnection } from './lcu/connection';
@@ -36,10 +36,10 @@ const loginWatcher = new LoginWatcher(eventDispatcher, {
 
     switch (state) {
       case 'offline':
-        lcuState.commit('close');
+        store.commit('lcuState/close');
         return;
       case 'online':
-        lcuState.commit('launch');
+        store.commit('lcuState/launch');
         return;
       case 'signedin':
         // TODO(koreanberry): The preference form should be up in this state.
