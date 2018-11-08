@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import path from 'path';
 import url from 'url';
 
@@ -28,6 +28,8 @@ function createMainWindow(): BrowserWindow {
   window.on('closed', () => {
     mainWindow = null;
   });
+
+
 
   window.webContents.on('devtools-opened', () => {
     window.focus();
@@ -59,4 +61,7 @@ app.on('activate', () => {
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
   mainWindow = createMainWindow();
+  const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [];
+  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+  Menu.setApplicationMenu(mainMenu);
 });
