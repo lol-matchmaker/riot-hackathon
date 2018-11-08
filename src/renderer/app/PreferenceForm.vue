@@ -9,7 +9,7 @@
     <el-form-item label="Chat Language">
       <el-select v-model="languagePreference" placeholder="Select language" filterable>
         <el-option
-          v-for="language in languages"
+          v-for="language in sortByEnglishName(languages)"
           :key="language['locale']"
           :label="language['englishName']"
           :value="language['locale']">
@@ -44,7 +44,7 @@
     data () {
       return {
         archetypes,
-        languages: languages.sort((a, b) => a['englishName'] < b['englishName']),
+        languages,
       };
     },
     computed: {
@@ -65,6 +65,11 @@
         },
       },
     },
+    methods: {
+      sortByEnglishName: function (languages) {
+        return languages.sort((a, b) => a['englishName'].localeCompare(b['englishName']));
+      },
+    }
   }
 </script>
 
