@@ -68,7 +68,7 @@
     },
     methods: {
       sortByEnglishName: function (languages) {
-        return languages.sort((a, b) => a['englishName'].localeCompare(b['englishName']));
+        return languages.slice().sort((a, b) => a['englishName'].localeCompare(b['englishName']));
       },
     }
   }
