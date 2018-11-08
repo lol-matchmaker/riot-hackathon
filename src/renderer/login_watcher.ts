@@ -2,8 +2,7 @@ import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
 
 export interface LoginWatcherDelegate {
-  onLoginChange(state: 'offline' | 'online' | 'signedin',
-                accountId: number, summonerId: number): void;
+  onLoginChange(state: 'offline' | 'online' | 'signedin'): void;
 }
 
 /** Monitors whether a user logs on or off. */
@@ -34,9 +33,9 @@ export class LoginWatcher {
         'OnJsonApiEvent_lol-login_v1_session',
         this.onLoginSessionChange.bind(this));
     eventDispatcher.addListener(
-        '@-online', this.onConnectionOnline.bind(this));
+        '@-lcu-online', this.onConnectionOnline.bind(this));
     eventDispatcher.addListener(
-        '@-offline', this.onConnectionOffline.bind(this));
+        '@-lcu-offline', this.onConnectionOffline.bind(this));
   }
 
   public accountId(): number { return this.lastAccountId; }
@@ -110,6 +109,6 @@ export class LoginWatcher {
     }
 
     this.lastState = state;
-    this.delegate.onLoginChange(state, this.lastAccountId, this.lastSummonerId);
+    this.delegate.onLoginChange(state);
   }
 }

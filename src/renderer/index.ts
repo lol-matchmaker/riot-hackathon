@@ -11,6 +11,7 @@ import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
 import { LoginWatcher } from './login_watcher';
+import { WsConnection } from './ws_connection';
 
 // tslint:disable-next-line:no-unused-expression
 new Vue({
@@ -28,6 +29,17 @@ eventDispatcher.addListener('OnLcdsEvent', (_: string, payload: any) =>  {
 // Also available:
 // OnLog, OnRegionLocaleChanged,
 // OnServiceProxyAsyncEvent, OnServiceProxyMethodEvent, OnServiceProxyUuidEvent
+
+// TODO(pwnall): Dev/Prod URL?
+const wsUrl = 'http://127.0.0.1:3000';
+const wsConnection = new WsConnection(wsUrl, {
+  onChallenge(token: String): void {
+    console.log(`WS sent challenge: ${token}`);
+  },
+  onReady(): void {
+    console.log('WS Ready');
+  },
+});
 
 const loginWatcher = new LoginWatcher(eventDispatcher, {
   async onLoginChange(state: 'offline' | 'online' | 'signedin'):
