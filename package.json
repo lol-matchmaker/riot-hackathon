@@ -40,8 +40,8 @@
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
     "@types/webpack": "^4.4.17",
-    "@types/ws": "^6.0.1"
-    "vuex": "^3.0.1",
+    "@types/ws": "^6.0.1",
+    "vuex": "^3.0.1"
   },
   "main": "lib/index.js",
   "typings": "lib/index",
