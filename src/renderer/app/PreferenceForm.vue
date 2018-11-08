@@ -2,11 +2,21 @@
   <el-form>
     <h2>My Preferences</h2>
     <p>Customize your next practice session.</p>
-    <el-form-item label="Champion Archetype">
-      <el-radio-group v-model="archetypePreference">
-        <el-radio-button :label="label" :key="label" v-for="label in archetypes"></el-radio-button>
+
+    <el-form-item label="Position">
+      <el-radio-group v-model="positionPreference">
+        <el-radio-button :label="label" :key="label" v-for="label in positions">
+        </el-radio-button>
       </el-radio-group>
     </el-form-item>
+
+    <el-form-item label="Champion Archetype">
+      <el-radio-group v-model="archetypePreference">
+        <el-radio-button :label="label" :key="label" v-for="label in archetypes">
+        </el-radio-button>
+      </el-radio-group>
+    </el-form-item>
+
     <el-form-item label="Chat Language">
       <el-select v-model="languagePreference" placeholder="Select language" filterable>
         <el-option
@@ -26,7 +36,7 @@
   import Vue from 'vue';
   import 'element-ui/lib/theme-chalk/index.css';
   import { Form, FormItem, RadioGroup, RadioButton, Select, Option } from 'element-ui';
-  import { archetypes } from './archetypes';
+  import { archetypes, positions } from './lol_preferences';
   import { languages } from './languages';
   import lang from 'element-ui/lib/locale/lang/en';
   import locale from 'element-ui/lib/locale';
@@ -46,6 +56,7 @@
       return {
         archetypes,
         languages,
+        positions,
       };
     },
     computed: {
@@ -63,6 +74,14 @@
         },
         set(value) {
           this.$store.commit('preferences/setLanguage', value);
+        },
+      },
+      positionPreference: {
+        get() {
+          return this.$store.state.preferences.position;
+        },
+        set(value) {
+          this.$store.commit('preferences/setPosition', value);
         },
       },
     },

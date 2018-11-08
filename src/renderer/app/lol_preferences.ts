@@ -6,3 +6,12 @@ export const archetypes = [
   'Support',
   'Tank',
 ];
+
+export const positions = [
+  'Top',
+  'Jungle',
+  'Middle',
+  'Bottom/ADC',
+  'Support',
+  'Fill',
+];

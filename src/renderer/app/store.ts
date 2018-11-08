@@ -13,7 +13,6 @@ const lcu = {
   mutations: {
     setStatus(state: any, value: LcuStatusType): void {
       state.status = value;
-      console.log('LCU STATE:', value);
     },
   },
 };
@@ -23,6 +22,7 @@ const preferences = {
   state: {
     archetype: null,
     language: null,
+    position: null,
   },
   mutations: {
     setArchetype(state: any, value: string): void {
@@ -30,6 +30,9 @@ const preferences = {
     },
     setLanguage(state: any, value: string): void {
       state.language = value;
+    },
+    setPosition(state: any, value: string): void {
+      state.position = value;
     },
   },
 };
