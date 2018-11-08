@@ -4,12 +4,12 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
-export const LcuState = new Vuex.Store({
+export const lcuState = new Vuex.Store({
   state: {
-    started: false
+    started: false,
   },
   mutations: {
-    launch (state) { state.started = true; },
-    close (state) { state.started = false; }
+    launch(state): void { state.started = true; },
+    close(state): void { state.started = false; },
   }
 });
