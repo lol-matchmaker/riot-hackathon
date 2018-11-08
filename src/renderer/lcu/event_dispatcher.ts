@@ -1,8 +1,6 @@
 import { LcuConnection } from './connection';
 
-export interface LcuEventListener {
-  onLcuEvent(topic: string, payload: any): void;
-}
+export type LcuEventListener = (topic: string, payload: any) => void;
 
 /** Manages WAMP events across multiple connections and listeners. */
 export class LcuEventDispatcher {
@@ -83,7 +81,7 @@ export class LcuEventDispatcher {
 
     for (const listener of topicListeners) {
       try {
-        listener.onLcuEvent(topic, payload);
+        listener(topic, payload);
       } catch (listenerError) {
         // Ignore errors and continue dispatch.
         console.error(listenerError);

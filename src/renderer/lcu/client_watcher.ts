@@ -1,19 +1,20 @@
 import { LcuConnection } from './connection';
+import { LcuConnectionDelegate } from './connection_delegate';
 import { LcuEventDispatcher } from './event_dispatcher';
 import { LcuInstanceInfo } from './instance_info';
 import { LcuInstanceWatcherDelegate } from './instance_watcher_delegate';
 import { LcuLockFileWatcher } from './lock_file_watcher';
 import { LcuProcessWatcher } from './process_watcher';
-import { LcuWatcherDelegate } from './watcher_delegate';
 
-/** Monitors League client (LCU) instances on the system. */
+/** Monitors League client (LCU) instances on the system.
+ *
+ * Connection state changes are broadcast to the event dispatcher.
+ */
 export class LcuClientWatcher {
-  /** Notified when clients come online and offline. */
-  private readonly delegate: LcuWatcherDelegate;
   /** Manages WAMP events for all clients discovered by this watcher. */
   private readonly eventDispatcher: LcuEventDispatcher;
   /** Delegate used with LCU connections. */
-  private readonly connectionDelegate: LcuWatcherDelegate;
+  private readonly connectionDelegate: LcuConnectionDelegate;
   /** Delegate used with lock file watchers. */
   private readonly lockWatcherDelegate: LcuInstanceWatcherDelegate;
   /** Cache of opened connections associated with file lock watchers. */
@@ -30,9 +31,7 @@ export class LcuClientWatcher {
    */
   private processWatcher: LcuProcessWatcher;
 
-  public constructor(eventDispatcher: LcuEventDispatcher,
-                     delegate: LcuWatcherDelegate) {
-    this.delegate = delegate;
+  public constructor(eventDispatcher: LcuEventDispatcher) {
     this.eventDispatcher = eventDispatcher;
     this.connectionDelegate = {
       offline: this.onConnectionOffline.bind(this),
@@ -111,7 +110,8 @@ export class LcuClientWatcher {
     if (knownGoodPath !== null) {
       this.addKnownGoodPath(knownGoodPath);
     }
-    this.delegate.online(connection);
+    this.eventDispatcher.dispatchEvent('@-online',
+                                       { connection, watcher: this });
   }
   private onConnectionOffline(connection: LcuConnection): void {
     console.log(['offline', connection]);
@@ -128,7 +128,8 @@ export class LcuClientWatcher {
     if (this.onlineConnections.size === 0 && this.knownGoodPaths.size === 0) {
       this.processWatcher.start();
     }
-    this.delegate.offline(connection);
+    this.eventDispatcher.dispatchEvent('@-offline',
+                                       { connection, watcher: this });
   }
 
   /** Start watching a LCU lock file, if the path is not already watched.

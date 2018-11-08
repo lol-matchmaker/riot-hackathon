@@ -34,7 +34,7 @@ export function Setposition(positionOne: string, positionTwo: string)
 
 export function IsClientConnected()
 {
-   console.log(LCURequest('/riot-messaging-service/v1/state', 'GET', {}));
+   // console.log(LCURequest('/riot-messaging-service/v1/state', 'GET', {}));
 }
 
 
