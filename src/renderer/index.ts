@@ -4,6 +4,14 @@
 
 import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
+import { LcuState } from './app/store';
+import Vue from 'vue';
+import App from './app/App.vue';
+
+new Vue({
+  el: '#app',
+  render: h => h(App)
+});
 
 const eventDispatcher = new LcuEventDispatcher();
 eventDispatcher.addListener('OnJsonApiEvent', {
@@ -13,8 +21,12 @@ eventDispatcher.addListener('OnJsonApiEvent', {
 });
 
 const clientWatcher = new LcuClientWatcher(eventDispatcher, {
-  offline: () => { return; },
+  offline: () => {
+    LcuState.commit('close');
+  },
   online: async connection => {
+    LcuState.commit('launch');
+
     const queues =
         await connection.request('GET', '/lol-game-queues/v1/queues');
     console.log(queues);
