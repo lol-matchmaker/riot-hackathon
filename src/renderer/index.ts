@@ -33,8 +33,8 @@ eventDispatcher.addListener('OnLcdsEvent', (_: string, payload: any) =>  {
 // TODO(pwnall): Dev/Prod URL?
 const wsUrl = 'http://127.0.0.1:3000';
 const wsConnection = new WsConnection(wsUrl, {
-  onChallenge(token: String): void {
-    console.log(`WS sent challenge: ${token}`);
+  onChallenge(): void {
+    authenticateIfPossible();  // Promise intentionally ignored.
   },
   onReady(): void {
     console.log('WS Ready');
@@ -60,6 +60,9 @@ const loginWatcher = new LoginWatcher(eventDispatcher, {
       return;
     }
 
+    authenticateIfPossible();  // Promise intentionally ignored.
+
+    /*
     // "as LcuConnection" is safe because the connection is only null when the
     // state is "offline".
     const connection = loginWatcher.connection() as LcuConnection;
@@ -88,8 +91,37 @@ const loginWatcher = new LoginWatcher(eventDispatcher, {
                                  notificationData);
     const notificationId = newNotification.id;
     console.log(notificationId);
+    */
   },
 });
+
+async function setVerificationToken(
+    connection: LcuConnection, summonerId: string,  token: string):
+    Promise<void> {
+  const url = `/lol-collections/v1/inventories/${summonerId}/verification`;
+  await connection.request('PUT', url, token);
+}
+
+async function authenticateIfPossible(): Promise<void> {
+  if (loginWatcher.state() !== 'signedin') {
+    return;
+  }
+  const accountId = loginWatcher.accountId().toString();
+  const summonerId = loginWatcher.summonerId().toString();
+
+  const token = wsConnection.token();
+  if (wsConnection.isAuthenticated() === true || token === null) {
+    return;
+  }
+
+  // "as LCUConnection" is safe because connection() can only return null when
+  // the state is 'offline' or null.
+  const lcuConnection = loginWatcher.connection() as LcuConnection;
+  await setVerificationToken(lcuConnection, summonerId, token);
+
+  wsConnection.sendAuth(accountId, summonerId);
+}
+
 
 // tslint:disable-next-line:no-unused-expression
 new LcuClientWatcher(eventDispatcher);

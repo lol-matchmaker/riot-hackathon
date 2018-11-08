@@ -2,7 +2,7 @@ import WebSocket = require('ws');
 import { AuthMessage } from './ws_messages';
 
 export interface WsConnectionDelegate {
-  onChallenge(token: string): void;
+  onChallenge(): void;
   onReady(): void;
 }
 
@@ -14,8 +14,12 @@ export class WsConnection {
   private readonly wsUrl: string;
   /** Number of ms between WebSocket reconnection attempts. */
   private readonly reconnectMs: number;
+  /** True if the server has accepted our credentials. */
+  private authenticated: boolean;
   /** True if we have a socket connected to our server. */
   private isConnected: boolean;
+  /** The last challenge token sent by the server. */
+  private lastToken: string | null;
   /** ws connection to our server. */
   private socket: WebSocket;
 
@@ -24,10 +28,17 @@ export class WsConnection {
     this.wsUrl = wsUrl;
     // TODO(pwnall): Better value that doesn't DDOS the server.
     this.reconnectMs = 1000;
+    this.authenticated = false;
     this.isConnected = false;
+    this.lastToken = null;
 
     this.socket = this.createSocket();
   }
+
+  /** True if the server has accepted our credentials. */
+  public isAuthenticated(): boolean { return this.authenticated; }
+  /** The last challenge token sent by the server. */
+  public token(): string | null { return this.lastToken; }
 
   /** Tells the server that we've set the summoner verification string. */
   public sendAuth(accountId: string, summonerId: string): void {
@@ -50,10 +61,13 @@ export class WsConnection {
     socket.onerror = this.onWsError.bind(this);
     socket.onmessage = this.onWsMessage.bind(this);
     socket.onopen = this.onWsOpen.bind(this);
-    return this.socket;
+    return socket;
   }
 
   private reconnect(): void {
+    this.lastToken = null;
+    this.authenticated = false;
+    this.isConnected = false;
     this.socket = this.createSocket();
   }
 
@@ -75,9 +89,11 @@ export class WsConnection {
     switch (message.type) {
       case 'challenge':
         this.isConnected = true;
-        this.delegate.onChallenge(message.token);
+        this.lastToken = message.token;
+        this.delegate.onChallenge();
         break;
       case 'ready':
+        this.authenticated = true;
         this.delegate.onReady();
         break;
       default:
