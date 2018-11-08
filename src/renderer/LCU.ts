@@ -32,19 +32,28 @@ export function Setposition(positionOne: string, positionTwo: string)
     LCURequest('/lol-lobby/v1/lobby/members/localMember/position-preferences', "PUT", data  )
 }
 
+export function IsClientConnected()
+{
+   console.log(LCURequest('/riot-messaging-service/v1/state', 'GET', {}));
+}
+
+
 // @ts-ignore
 function LCURequest(endpoint: string, requestType: string, data )
 {
+    var newNotification;
     const eventDispatcher = new LcuEventDispatcher();
     const clientWatcher = new LcuClientWatcher(eventDispatcher, {
         offline: () => {
         },
         online: async connection => {
-            const newNotification =
+             newNotification =
                 await connection.request(requestType,
                     endpoint,
                     data);
             console.log(newNotification);
         },
     });
+    return newNotification;
+
 }
