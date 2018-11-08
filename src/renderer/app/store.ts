@@ -4,12 +4,39 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
-export const lcuState = new Vuex.Store({
+type LcuStatusType = 'offline' | 'online' | 'signedin';
+const lcu = {
+  namespaced: true,
   state: {
-    started: false,
+    status: 'offline',
   },
   mutations: {
-    launch(state): void { state.started = true; },
-    close(state): void { state.started = false; },
-  }
+    setStatus(state: any, value: LcuStatusType): void {
+      state.status = value;
+      console.log('LCU STATE:', value);
+    },
+  },
+};
+
+const preferences = {
+  namespaced: true,
+  state: {
+    archetype: null,
+    language: null,
+  },
+  mutations: {
+    setArchetype(state: any, value: string): void {
+      state.archetype = value;
+    },
+    setLanguage(state: any, value: string): void {
+      state.language = value;
+    },
+  },
+};
+
+export const store = new Vuex.Store({
+  modules: {
+    lcu,
+    preferences,
+  },
 });

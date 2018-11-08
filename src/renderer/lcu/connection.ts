@@ -1,9 +1,9 @@
 import request = require('request-promise-native');
 import WebSocket = require('ws');
 
+import { LcuConnectionDelegate } from './connection_delegate';
 import { LcuEventDispatcher } from './event_dispatcher';
 import { LcuInstanceInfo } from './instance_info';
-import { LcuWatcherDelegate } from './watcher_delegate';
 
 /** WAMP 1.0 message types.
  *
@@ -29,7 +29,7 @@ export class LcuConnection {
   public wasEverOnline: boolean;
 
   /** The delegate receives connection state change notifications. */
-  private readonly delegate: LcuWatcherDelegate;
+  private readonly delegate: LcuConnectionDelegate;
   /** The dispatcher that manages WAMP events. */
   private readonly eventDispatcher: LcuEventDispatcher;
   /** The ID of this connection's WAMP session. null if disconnected. */
@@ -45,7 +45,7 @@ export class LcuConnection {
   /** Immediately starts a connection to the given LCU instance. */
   public constructor(client: LcuInstanceInfo,
                      eventDispatcher: LcuEventDispatcher,
-                     delegate: LcuWatcherDelegate) {
+                     delegate: LcuConnectionDelegate) {
     this.client = client;
     this.delegate = delegate;
     this.eventDispatcher = eventDispatcher;

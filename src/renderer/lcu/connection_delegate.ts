@@ -4,7 +4,7 @@ import { LcuConnection } from './connection';
  *
  * This is used by LcuLockFileWatcher and LcuProcessWatcher.
  */
-export interface LcuWatcherDelegate {
+export interface LcuConnectionDelegate {
   /** Called after successfully connecting to an LCU instance. */
   online(connection: LcuConnection): void;
 

@@ -1,24 +1,31 @@
 <template>
   <div id="wrapper">
     <h1>Ohai</h1>
-    <div v-if="clientStarted">
-      Good job.
+    <div v-if="lcuStatus == 'offline'">
+      Start your League of Legends client.
+    </div>
+    <div v-else-if="lcuStatus == 'online'">
+      Log into the League of Legends client.
     </div>
     <div v-else>
-      Please start your League of Legends client.
+      <preference-form></preference-form>
     </div>
   </div>
 </template>
 
 <script>
-  import { LcuState } from './store';
+  import { store } from './store';
+  import PreferenceForm from './PreferenceForm';
 
   export default {
     name: 'app',
-    store: LcuState,
+    components: {
+      PreferenceForm
+    },
+    store,
     computed: {
-      clientStarted: function () {
-        return this.$store.state.started;
+      lcuStatus: function () {
+        return this.$store.state.lcu.status;
       }
     }
   }
