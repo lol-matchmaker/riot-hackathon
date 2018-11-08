@@ -22,9 +22,14 @@ export function AcceptInvites()
     LCURequest("/lol-lobby/v2/received-invitations/1001bd5a-e7a4-40f9-ab30-146a90b2f0ab/accept", "POST", {});
 }
 
-export function Setposition()
+export function Setposition(positionOne: string, positionTwo: string)
 {
-
+    const data =
+        {
+            firstPreference: positionOne,
+            secondPreference: positionTwo,
+        };
+    LCURequest('/lol-lobby/v1/lobby/members/localMember/position-preferences', "PUT", data  )
 }
 
 // @ts-ignore
