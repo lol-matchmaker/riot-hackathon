@@ -2,15 +2,18 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
+import Vue from 'vue';
+
+import App from './app/App.vue';
+import { lcuState } from './app/store';
+
 import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
-import { LcuState } from './app/store';
-import Vue from 'vue';
-import App from './app/App.vue';
 
+// tslint:disable-next-line:no-unused-expression
 new Vue({
   el: '#app',
-  render: h => h(App)
+  render: h => h(App),
 });
 
 const eventDispatcher = new LcuEventDispatcher();
@@ -22,10 +25,10 @@ eventDispatcher.addListener('OnJsonApiEvent', {
 
 const clientWatcher = new LcuClientWatcher(eventDispatcher, {
   offline: () => {
-    LcuState.commit('close');
+    lcuState.commit('close');
   },
   online: async connection => {
-    LcuState.commit('launch');
+    lcuState.commit('launch');
 
     const queues =
         await connection.request('GET', '/lol-game-queues/v1/queues');
