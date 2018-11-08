@@ -1,11 +1,14 @@
 <template>
   <div id="wrapper">
     <h1>Ohai</h1>
-    <div v-if="clientStarted">
-      <preference-form></preference-form>
+    <div v-if="lcuStatus == 'offline'">
+      Start your League of Legends client.
+    </div>
+    <div v-else-if="lcuStatus == 'online'">
+      Log into the League of Legends client.
     </div>
     <div v-else>
-      Please start your League of Legends client.
+      <preference-form></preference-form>
     </div>
   </div>
 </template>
@@ -21,8 +24,8 @@
     },
     store,
     computed: {
-      clientStarted: function () {
-        return this.$store.state.lcuState.started;
+      lcuStatus: function () {
+        return this.$store.state.lcu.status;
       }
     }
   }

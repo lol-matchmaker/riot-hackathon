@@ -33,16 +33,13 @@ const loginWatcher = new LoginWatcher(eventDispatcher, {
   async onLoginChange(state: 'offline' | 'online' | 'signedin'):
       Promise<void> {
     console.log(`LoginWatcher state: ${state}`);
+    store.commit('lcu/setStatus', state);
 
     switch (state) {
       case 'offline':
-        store.commit('lcuState/close');
-        return;
       case 'online':
-        store.commit('lcuState/launch');
         return;
       case 'signedin':
-        // TODO(koreanberry): The preference form should be up in this state.
         break;
       default:
         return;

@@ -4,17 +4,16 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
-const lcuState = {
+type LcuStatusType = 'offline' | 'online' | 'signedin';
+const lcu = {
   namespaced: true,
   state: {
-    started: false
+    status: 'offline',
   },
   mutations: {
-    launch(state: any): void {
-      state.started = true;
-    },
-    close(state: any): void {
-      state.started = false;
+    setStatus(state: any, value: LcuStatusType): void {
+      state.status = value;
+      console.log('LCU STATE:', value);
     },
   },
 };
@@ -37,7 +36,7 @@ const preferences = {
 
 export const store = new Vuex.Store({
   modules: {
-    lcuState,
+    lcu,
     preferences,
   },
 });

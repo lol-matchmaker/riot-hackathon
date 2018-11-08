@@ -1,6 +1,7 @@
 <template>
   <el-form>
     <h2>My Preferences</h2>
+    <p>Customize your next practice session.</p>
     <el-form-item label="Champion Archetype">
       <el-radio-group v-model="archetypePreference">
         <el-radio-button :label="label" :key="label" v-for="label in archetypes"></el-radio-button>
@@ -74,6 +75,9 @@
 </script>
 
 <style lang="scss">
+h2, p {
+  text-align: center;
+}
 .el-select {
   width: 300px;
 }
