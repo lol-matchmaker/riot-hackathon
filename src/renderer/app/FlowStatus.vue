@@ -1,16 +1,3 @@
-<template>
-<div>
-  <el-alert
-    v-bind:title="attrs.main"
-    v-bind:type="attrs.level"
-    v-bind:description="attrs.sub"
-    :closable="false"
-    show-icon>
-  </el-alert>
-  <div>{{test}}</div>
-</div>
-</template>
-
 <script>
   import Vue from 'vue';
   import { Alert } from 'element-ui';
@@ -58,13 +45,22 @@
   export default {
     name: 'flow-status',
     computed: {
-      test() {
-        console.log('test', attrsByStatus[this.$store.state.lcu.status].main);
-        return this.$store.lcu;
-      },
       attrs() {
         return attrsByStatus[this.$store.state.lcu.status];
       },
     }
   }
 </script>
+
+<template>
+  <div>
+    <el-alert
+      v-bind:title="attrs.main"
+      v-bind:type="attrs.level"
+      v-bind:description="attrs.sub"
+      :closable="false"
+      show-icon>
+    </el-alert>
+    <div>{{test}}</div>
+  </div>
+</template>
