@@ -57,11 +57,11 @@ export class WsConnection {
   }
 
   /** Asks the server to queue us up. */
-  public requestQueue(): void {
+  public requestQueue(data:any): void {
     if (this.lastState !== 'ready') {
       throw new Error('Not a good time to queue');
     }
-    const message: RequestQueueMessage = { type: 'plsqueue' };
+    const message: RequestQueueMessage = { type: 'plsqueue', data: data};
     this.socket.send(JSON.stringify(message));
   }
 

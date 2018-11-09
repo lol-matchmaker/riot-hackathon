@@ -20,6 +20,7 @@ export interface WelcomeMessage {
 /** Client -> Server: Player is ready to get matched. Do magic. */
 export interface RequestQueueMessage {
   type: 'plsqueue';
+  data: JSON;
 }
 
 /** Server -> Client: Player is in queue. Ask player to wait. */
