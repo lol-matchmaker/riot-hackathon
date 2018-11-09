@@ -39,7 +39,7 @@ export function Setposition(positionOne: string, positionTwo: string, connection
 }
 
 
- export async function GetInvitationID(connection: LcuConnection, summonerID: string)
+export async function GetInvitationID(connection: LcuConnection, summonerID: string)
 {
 
     var json = await LCURequest('/lol-lobby/v2/received-invitations', 'GET', {}, connection);
@@ -48,6 +48,11 @@ export function Setposition(positionOne: string, positionTwo: string, connection
         return json["invitationId"]
     }
 
+}
+
+export function sendNotification(notif: string, connection: LcuConnection)
+{
+    LCURequest('/lol-simple-dialog-messages/v1/messages', 'POST', notif, connection);
 }
 
 
