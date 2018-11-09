@@ -75,6 +75,13 @@ export class UiController
     this.wsConnection.requestQueue();
   }
 
+  public exitQueue(): void {
+    if (this.lastState !== 'queued') {
+      return;
+    }
+    this.wsConnection.cancelQueue();
+  }
+
   public setupDebugLogging(): void {
     this.eventDispatcher.addListener(
         'OnJsonApiEvent', (_: string, payload: any) => {

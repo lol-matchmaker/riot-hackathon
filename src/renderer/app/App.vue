@@ -32,17 +32,16 @@
       }
     },
     computed: {
-      lcuStatus: function () {
-        return this.$store.state.lcu.status;
+      clientConnected() {
+        const lcuStatus = this.$store.state.lcu.status;
+        const disconnectedStates = ['lcu-offline', 'connecting', 'challenged'];
+        return !disconnectedStates.includes(lcuStatus);
       },
-      backgroundImageUrl: function () {
-        switch (this.lcuStatus) {
-          case 'lcu-offline':
-          case 'connecting':
-          case 'challenged':
-            return this.disconnectedImageUrl;
-          default:
-            return this.connectedImageUrl;
+      backgroundImageUrl() {
+        if (this.clientConnected) {
+          return this.connectedImageUrl;
+        } else {
+          return this.disconnectedImageUrl;
         }
       },
     }
@@ -69,7 +68,7 @@ body {
       </el-row>
     </el-header>
     <el-main>
-      <div v-if="lcuStatus == 'ready'">
+      <div v-if="clientConnected">
         <el-row type="flex" justify="center">
           <preference-form></preference-form>
         </el-row>
