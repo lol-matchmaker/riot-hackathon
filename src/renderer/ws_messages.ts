@@ -37,9 +37,16 @@ export interface DequeuedMessage {
   type: 'dequeued';
 }
 
+/** Per-player information in the Server -> Client matchmaking packet. */
+export interface MatchedMessagePlayerInfo {
+  account_id: string;
+  summoner_id: string;
+}
+
 /** Server -> Client: Player is in match. */
 export interface MatchedMessage {
   type: 'matched';
+  players: MatchedMessagePlayerInfo[];
 }
 
 /** All messages. */

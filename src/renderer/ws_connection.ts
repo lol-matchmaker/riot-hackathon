@@ -1,6 +1,6 @@
 import WebSocket = require('ws');
-import { AuthMessage, CancelQueueMessage, RequestQueueMessage }
-    from './ws_messages';
+import { AuthMessage, CancelQueueMessage, MatchedMessagePlayerInfo,
+         RequestQueueMessage, WsMessage } from './ws_messages';
 
 export type WsConnectionState =
     'connecting' | 'challenged' | 'ready' | 'queued' | 'matched';
@@ -21,6 +21,8 @@ export class WsConnection {
   private lastState: WsConnectionState;
   /** The last challenge token sent by the server. */
   private lastToken: string | null;
+  /** The last match-making information sent by the server. */
+  private lastMatchData: MatchedMessagePlayerInfo[] | null;
   /** ws connection to our server. */
   private socket: WebSocket;
 
@@ -31,6 +33,7 @@ export class WsConnection {
     this.reconnectMs = 1000;
     this.lastToken = null;
     this.lastState = 'connecting';
+    this.lastMatchData = null;
 
     this.socket = this.createSocket();
   }
@@ -39,6 +42,10 @@ export class WsConnection {
   public state(): WsConnectionState { return this.lastState; }
   /** The last challenge token sent by the server. */
   public token(): string | null { return this.lastToken; }
+  /** The last match-making information sent by the server. */
+  public matchData(): MatchedMessagePlayerInfo[] | null {
+    return this.lastMatchData;
+  }
 
   /** Tells the server that we've set the summoner verification string. */
   public sendAuth(accountId: string, summonerId: string): void {
@@ -105,7 +112,7 @@ export class WsConnection {
   }
 
   private onWsMessage(event: MessageEvent): void {
-    const message = JSON.parse(event.data);
+    const message: WsMessage  = JSON.parse(event.data);
     console.log(message);
 
     switch (message.type) {
@@ -123,6 +130,7 @@ export class WsConnection {
         this.setState('ready');
         break;
       case 'matched':
+        this.lastMatchData = message.players;
         this.setState('matched');
         break;
       default:

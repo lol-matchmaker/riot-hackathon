@@ -80,6 +80,9 @@ export class UiController
     if (state === 'challenged') {
       this.authenticate();  // Promise ignored intentionally.
     }
+    if (state === 'matched') {
+      this.setupMatch();
+    }
   }
 
   // LoginWatcherDelegate
@@ -113,6 +116,7 @@ export class UiController
     this.wsConnection.sendAuth(accountId, summonerId);
   }
 
+  /** Used to authenticate the ownership of a League account to our server. */
   private async setVerificationToken(
       connection: LcuConnection, summonerId: string, token: string):
       Promise<void> {
@@ -150,6 +154,26 @@ export class UiController
     return notificationId;
   }
 
+  private async setupMatch(): Promise<void> {
+    console.log('In setup match');
+    const playerInfos = this.wsConnection.matchData();
+    if (playerInfos === null || playerInfos.length === 0) {
+      throw new Error('No match available');
+    }
+
+    // Only the first player is responsible for setting up the game.
+    const firstPlayer = playerInfos[0];
+    const accountId = this.loginWatcher.accountId().toString();
+    if (firstPlayer.account_id !== accountId) {
+      return;
+    }
+
+    // Actually set up the match.
+    console.log('Should set up the match');
+    console.log(playerInfos);
+  }
+
+  /** FSM update logic. */
   private setState(state: UiControllerState): void {
     if (this.lastState === state) {
       return;
