@@ -10,6 +10,7 @@ import { IncomingInvite, LobbyData, LoginWatcher, LoginWatcherDelegate,
 import { WsConnection, WsConnectionDelegate, WsConnectionState }
     from './ws_connection';
 import { MatchedMessagePlayerInfo } from './ws_messages';
+import { delay } from './delay';
 
 export type UiControllerState =
     'lcu-offline' | 'lcu-online' | WsConnectionState;
@@ -168,11 +169,16 @@ export class UiController
             playerInfo => playerInfo.summoner_id === ourSummonerIdString);
         if (ourPlayerInfo !== undefined) {
           console.log('Selecting our roles');
-          setTimeout(
-              () => {
-                this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
-              },
-              5000);
+          for (let retryCount = 0; retryCount < 100; ++retryCount) {
+            await delay(1000);
+            try {
+              this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
+              break;
+            } catch (lcuError) {
+              console.error('LCU error while inviting');
+              console.error(lcuError);
+            }
+          }
         }
       }
     }
@@ -270,20 +276,16 @@ export class UiController
     const lcu = this.checkedLcu();
     await lcu.createLobby(400);  // 400 is draft, 430 is blind.
 
-
-    setTimeout(async () => {
-      // Invite players to the lobby.
-      for (const playerInfo of playerInfos) {
-        // LCU only deals with integers, so this had better be an integer.
-        const accountId = parseInt(playerInfo.account_id, 10);
-        if (accountId === ourAccountId) {
-          continue;
-        }
-        const summonerId = parseInt(playerInfo.summoner_id, 10);
-        await lcu.sendLobbyInvite(summonerId, playerInfo.summoner_name);
+    // Invite players to the lobby.
+    for (const playerInfo of playerInfos) {
+      // LCU only deals with integers, so this had better be an integer.
+      const accountId = parseInt(playerInfo.account_id, 10);
+      if (accountId === ourAccountId) {
+        continue;
       }
-
-    }, 5000);
+      const summonerId = parseInt(playerInfo.summoner_id, 10);
+      await lcu.sendLobbyInvite(summonerId, playerInfo.summoner_name);
+    }
   }
 
   /** FSM update logic. */
