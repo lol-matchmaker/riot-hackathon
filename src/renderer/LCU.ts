@@ -1,24 +1,16 @@
-import {LcuClientWatcher} from "./lcu/client_watcher";
-import {LcuEventDispatcher} from "./lcu/event_dispatcher";
-const request = require('request');
-const path = require('path');
-const ApiKey = "RGAPI-3ef0766a-2754-4a23-82c5-868572d39e06";
+import {LcuConnection} from "./lcu/connection";
 
-/**
- * This file is SUPER WIP nothing in here is done.
- *
- */
+
 // @ts-ignore
-
-export function SendAllInvites(playerdatalist) {
+export function SendAllInvites(playerdatalist, connection: LcuConnection) {
     for (let playerdata of playerdatalist )
     {
         var id = playerdata["toSummonerId"];
-        SendPlayerInvite(id);
+        SendPlayerInvite(id, connection);
     }
 }
 
-export function SendPlayerInvite(summonerid: number)
+export function SendPlayerInvite(summonerid: number, connection: LcuConnection)
 {
     const notificationData = [
         {
@@ -26,44 +18,36 @@ export function SendPlayerInvite(summonerid: number)
             toSummonerId: summonerid,
         },
     ];
-    LCURequest('/lol-lobby/v2/eog-invitations', 'POST', notificationData)
+    LCURequest('/lol-lobby/v2/eog-invitations', 'POST', notificationData, connection)
 }
 
-export function AcceptInvites()
+export function AcceptInvites(fromSummonerID: string, invitationID: string, connection: LcuConnection, )
 {
-    LCURequest("/lol-lobby/v2/received-invitations/1001bd5a-e7a4-40f9-ab30-146a90b2f0ab/accept", "POST", {});
+    LCURequest("/lol-lobby/v2/received-invitations/" + invitationID + "/accept", "POST", {}, connection);
 }
 
 
 
-export function Setposition(positionOne: string, positionTwo: string)
+export function Setposition(positionOne: string, positionTwo: string, connection: LcuConnection)
 {
     const data =
         {
             firstPreference: positionOne,
             secondPreference: positionTwo,
         };
-    LCURequest('/lol-lobby/v1/lobby/members/localMember/position-preferences', "PUT", data  )
+    LCURequest('/lol-lobby/v1/lobby/members/localMember/position-preferences', "PUT", data, connection  )
 }
 
 
-
-export function IsClientConnected()
+export function GetInvitationID(connection: LcuConnection)
 {
-   // console.log(LCURequest('/riot-messaging-service/v1/state', 'GET', {}));
+    var json = LCURequest('/lol-lobby/v2/received-invitations', 'GET', {}, connection);
+    // @ts-ignore
+    return json["invitationId"];
 }
 
 
-
-export function GetInvitationID()
-{
-    var json = LCURequest('/lol-lobby/v2/received-invitations', 'GET', {});
-    var invitations = JSON.parse(json);
-    var invitationID = invitations["invitationId"];
-}
-
-
-export function CreateLobby()
+export function CreateLobby(connection: LcuConnection)
 {
     var data =
         {
@@ -71,27 +55,15 @@ export function CreateLobby()
             "isCustom": false,
             "queueId": 430
         };
-    LCURequest('/lol-lobby/v2/lobby', 'POST', data);
+    LCURequest('/lol-lobby/v2/lobby', 'POST', data, connection);
 }
 
-
-
 // @ts-ignore
-function LCURequest(endpoint: string, requestType: string, data )
-{
-    var newNotification;
-    const eventDispatcher = new LcuEventDispatcher();
-    const clientWatcher = new LcuClientWatcher(eventDispatcher, {
-        offline: () => {
-        },
-        online: async connection => {
-             newNotification =
-                await connection.request(requestType,
-                    endpoint,
-                    data);
-            console.log(newNotification);
-        },
-    });
-    return newNotification;
+async function LCURequest(endpoint: string, requestType: string, data, connection: LcuConnection) {
+
+    var returndata = await connection.request(requestType, endpoint, data);
+    console.log(returndata);
+    return returndata;
+
 
 }
