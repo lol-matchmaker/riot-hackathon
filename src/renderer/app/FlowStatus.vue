@@ -48,6 +48,11 @@
       sub: 'Please wait while find your perfect match',
       level: 'info',
     },
+    'matched': {
+      main: 'Setting up match',
+      sub: 'Please wait while we set up your match',
+      level: 'info',
+    },
   };
 
   export default {
