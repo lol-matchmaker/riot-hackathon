@@ -39,7 +39,7 @@ export class UiController
     this.wsConnection = new WsConnection(this.wsUrl, this);
     this.clientWatcher = new LcuClientWatcher(this.eventDispatcher);
 
-    this.setupDebugLogging();
+    // this.setupDebugLogging();
   }
 
   public static serverWsUrl(): string {

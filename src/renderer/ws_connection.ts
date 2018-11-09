@@ -1,5 +1,6 @@
 import WebSocket = require('ws');
-import { AuthMessage } from './ws_messages';
+import { AuthMessage, CancelQueueMessage, RequestQueueMessage }
+    from './ws_messages';
 
 export type WsConnectionState =
     'connecting' | 'challenged' | 'ready' | 'queued' | 'matched';
@@ -45,6 +46,24 @@ export class WsConnection {
       throw new Error('Server WS not connected!');
     }
     const message: AuthMessage = { type: 'auth', accountId, summonerId };
+    this.socket.send(JSON.stringify(message));
+  }
+
+  /** Asks the server to queue us up. */
+  public requestQueue(): void {
+    if (this.lastState !== 'ready') {
+      throw new Error('Not a good time to queue');
+    }
+    const message: RequestQueueMessage = { type: 'plsqueue' };
+    this.socket.send(JSON.stringify(message));
+  }
+
+  /** Asks the server to remove us from the match-making queue. */
+  public cancelQueue(): void {
+    if (this.lastState !== 'queued') {
+      throw new Error('No queue to get off of');
+    }
+    const message: CancelQueueMessage = { type: 'noqueue' };
     this.socket.send(JSON.stringify(message));
   }
 
@@ -96,6 +115,15 @@ export class WsConnection {
         break;
       case 'ready':
         this.setState('ready');
+        break;
+      case 'queued':
+        this.setState('queued');
+        break;
+      case 'dequeued':
+        this.setState('ready');
+        break;
+      case 'matched':
+        this.setState('matched');
         break;
       default:
         console.error('Unknown message from Server WS. Pls update client?');

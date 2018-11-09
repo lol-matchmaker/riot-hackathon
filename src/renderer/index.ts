@@ -16,4 +16,4 @@ new Vue({
 });
 
 // tslint:disable-next-line:no-unused-expression
-new UiController(store);
+(self as any).controller = new UiController(store);

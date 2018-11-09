@@ -43,6 +43,11 @@
       sub: 'Set your matchmaking preferences and queue up!',
       level: 'success',
     },
+    'queued': {
+      main: 'In queue',
+      sub: 'Please wait while find your perfect match',
+      level: 'info',
+    },
   };
 
   export default {
