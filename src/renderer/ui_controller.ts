@@ -4,10 +4,11 @@ import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
 import { LcuHelper } from './lcu_helper';
-import { LoginWatcher, LoginWatcherDelegate, LoginWatcherState }
+import { LobbyData, LoginWatcher, LoginWatcherDelegate, LoginWatcherState }
     from './login_watcher';
 import { WsConnection, WsConnectionDelegate, WsConnectionState }
     from './ws_connection';
+import { MatchedMessagePlayerInfo } from './ws_messages';
 
 export type UiControllerState =
     'lcu-offline' | 'lcu-online' | WsConnectionState;
@@ -124,6 +125,60 @@ export class UiController
     this.setState(newState);
     if (newState === 'challenged') {
       this.authenticate();  // Promise intentionally ignored.
+    }
+  }
+  public async onLobbyChange(lobby: LobbyData | null): Promise<void> {
+    console.log('UIC onLobbyChange');
+    console.log(lobby);
+
+    if (this.lastState !== 'matched') {
+      return;
+    }
+    if (lobby === null) {
+      return;
+    }
+
+    // "as MatchedMessagePlayerInfo[]" is safe because the match data is not
+    // null when the state is "matched".
+    const playerInfos =
+        this.wsConnection.matchData() as MatchedMessagePlayerInfo[];
+    const summonerIds = new Set<string>();
+    for (const playerInfo of playerInfos) {
+      summonerIds.add(playerInfo.summoner_id);
+    }
+
+    // Only the first player is responsible for setting up the game.
+    const firstPlayer = playerInfos[0];
+    const ourAccountId = this.loginWatcher.accountId();
+    if (firstPlayer.account_id !== ourAccountId.toString()) {
+      return;
+    }
+
+    // Check if all needed players have selected roles.
+    for (const member of lobby.members) {
+      const summonerId = member.summoner_id.toString();
+      if (!summonerIds.has(summonerId)) {
+        continue;
+      }
+      for (const role of member.roles) {
+        if (role === 'UNSELECTED') {
+          return;
+        }
+      }
+    }
+
+    // Check if all needed players have accepted invitations.
+    for (const invite of lobby.invites) {
+      if (invite.state !== 'Accepted') {
+        // TODO(pwnall): Bail and reset if the invite state is Declined.
+        continue;
+      }
+      const summonerId = invite.summoner_id.toString();
+      summonerIds.delete(summonerId);
+    }
+
+    if (summonerIds.size === 0) {
+      this.checkedLcu().startLobbyMatch();
     }
   }
 

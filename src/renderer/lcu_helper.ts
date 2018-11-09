@@ -55,13 +55,13 @@ export class LcuHelper {
     console.log(lobbyData);
   }
 
-  /** Invite a player to a lobby. */
+  /** Invite some players to a lobby. */
   public async sendLobbyInvite(summonerId: number,
                                summonerName: string): Promise<void> {
     const invitation = await this.connection.request(
         'POST', '/lol-lobby/v2/eog-invitations',
-        { state: 'Requested', toSummonerId: summonerId,
-          toSummonerName: summonerName });
+        [{ state: 'Requested', timeStamp: (new Date()).toISOString(),
+          toSummonerId: summonerId, toSummonerName: summonerName }]);
     console.log(invitation);
   }
 
@@ -74,4 +74,9 @@ export class LcuHelper {
           secondPreference: roles[1] || 'FILL'});
   }
 
+  /** Click the 'Start' button in the lobby. */
+  public async startLobbyMatch(): Promise<void> {
+    await this.connection.request(
+        'POST', '/lol-lobby/v2/lobby/matchmaking/search', {});
+  }
 }
