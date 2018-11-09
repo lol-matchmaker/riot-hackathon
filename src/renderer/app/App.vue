@@ -1,26 +1,38 @@
 <template>
-  <div id="wrapper">
-    <h1>Ohai</h1>
-    <div v-if="lcuStatus == 'offline'">
-      Start your League of Legends client.
-    </div>
-    <div v-else-if="lcuStatus == 'online'">
-      Log into the League of Legends client.
-    </div>
-    <div v-else>
-      <preference-form></preference-form>
-    </div>
-  </div>
+  <el-container>
+    <el-header>
+      <h1>Ohai</h1>
+    </el-header>
+    <el-main>
+      <div v-if="lcuStatus == 'signedin'">
+        <preference-form></preference-form>
+      </div>
+      <div v-else>
+      </div>
+    </el-main>
+    <el-footer>
+      <flow-status></flow-status>
+    </el-footer>
+  </el-container>
 </template>
 
 <script>
+  import Vue from 'vue';
+  import { Container, Header, Main, Footer } from 'element-ui';
   import { store } from './store';
+  import FlowStatus from './FlowStatus';
   import PreferenceForm from './PreferenceForm';
+
+  Vue.use(Container);
+  Vue.use(Header);
+  Vue.use(Main);
+  Vue.use(Footer);
 
   export default {
     name: 'app',
     components: {
-      PreferenceForm
+      FlowStatus,
+      PreferenceForm,
     },
     store,
     computed: {
@@ -30,11 +42,3 @@
     }
   }
 </script>
-
-<style lang="scss">
-#wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-</style>

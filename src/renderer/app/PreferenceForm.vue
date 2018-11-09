@@ -1,37 +1,3 @@
-<template>
-  <el-form>
-    <h2>My Preferences</h2>
-    <p>Customize your next practice session.</p>
-
-    <el-form-item label="Position">
-      <el-radio-group v-model="positionPreference">
-        <el-radio-button :label="label" :key="label" v-for="label in positions">
-        </el-radio-button>
-      </el-radio-group>
-    </el-form-item>
-
-    <el-form-item label="Champion Archetype">
-      <el-radio-group v-model="archetypePreference">
-        <el-radio-button :label="label" :key="label" v-for="label in archetypes">
-        </el-radio-button>
-      </el-radio-group>
-    </el-form-item>
-
-    <el-form-item label="Chat Language">
-      <el-select v-model="languagePreference" placeholder="Select language" filterable>
-        <el-option
-          v-for="language in sortByEnglishName(languages)"
-          :key="language['locale']"
-          :label="language['englishName']"
-          :value="language['locale']">
-          <span class="en">{{ language['englishName'] }}</span>
-          <span class="native">{{ language['nativeName'] }}</span>
-        </el-option>
-      </el-select>
-    </el-form-item>
-  </el-form>
-</template>
-
 <script>
   import Vue from 'vue';
   import 'element-ui/lib/theme-chalk/index.css';
@@ -93,7 +59,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 h2, p {
   text-align: center;
 }
@@ -109,3 +75,37 @@ li {
   }
 }
 </style>
+
+<template>
+  <el-form>
+    <h2>My Preferences</h2>
+    <p>Customize your next practice session.</p>
+
+    <el-form-item label="Position">
+      <el-radio-group v-model="positionPreference">
+        <el-radio-button :label="label" :key="label" v-for="label in positions">
+        </el-radio-button>
+      </el-radio-group>
+    </el-form-item>
+
+    <el-form-item label="Champion Archetype">
+      <el-radio-group v-model="archetypePreference">
+        <el-radio-button :label="label" :key="label" v-for="label in archetypes">
+        </el-radio-button>
+      </el-radio-group>
+    </el-form-item>
+
+    <el-form-item label="Chat Language">
+      <el-select v-model="languagePreference" placeholder="Select language" filterable>
+        <el-option
+          v-for="language in sortByEnglishName(languages)"
+          :key="language['locale']"
+          :label="language['englishName']"
+          :value="language['locale']">
+          <span class="en">{{ language['englishName'] }}</span>
+          <span class="native">{{ language['nativeName'] }}</span>
+        </el-option>
+      </el-select>
+    </el-form-item>
+  </el-form>
+</template>
