@@ -45,11 +45,41 @@ export class LcuHelper {
 
   /** Create a game lobby. */
   public async createLobby(queueId: number): Promise<void> {
+    const gameConfig = {
+      "allowablePremadeSizes": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "customLobbyName": "",
+      "customMutatorName": "",
+      "customRewardsDisabledReasons": [],
+      "customSpectatorPolicy": "NotAllowed",
+      "customSpectators": [],
+      "customTeam100": [],
+      "customTeam200": [],
+      "gameMode": "CLASSIC",
+      "isCustom": false,
+      "isLobbyFull": false,
+      "isTeamBuilderManaged": false,
+      "mapId": 11,
+      "maxHumanPlayers": 0,
+      "maxLobbySize": 5,
+      "maxTeamSize": 5,
+      "pickType": "",
+      "premadeSizeAllowed": true,
+      "showPositionSelector": true
+    };
     const lobbyData = {
+      gameConfig,
       gameCustomization: {},
       isCustom: false,
       queueId,
     };
+    console.log('Creating lobby');
+    console.log(lobbyData);
     await this.connection.request('POST', '/lol-lobby/v2/lobby', lobbyData);
   }
 
@@ -58,8 +88,8 @@ export class LcuHelper {
                                summonerName: string): Promise<void> {
     await this.connection.request(
         'POST', '/lol-lobby/v2/eog-invitations',
-        [{ state: 'Requested', timeStamp: (new Date()).toISOString(),
-          toSummonerId: summonerId, toSummonerName: summonerName }]);
+        [{ state: 'Requested', timeStamp: Date.now().toString(),
+           toSummonerId: summonerId, toSummonerName: summonerName }]);
   }
 
   /** Set a position in a game lobby. */
