@@ -22,7 +22,8 @@ const preferences = {
   state: {
     intensity: null,
     language: null,
-    position: null,
+    primaryPosition: null,
+    secondaryPosition: null,
     roles: [],
   },
   mutations: {
@@ -32,8 +33,11 @@ const preferences = {
     setLanguage(state: any, value: string): void {
       state.language = value;
     },
-    setPosition(state: any, value: string): void {
-      state.position = value;
+    setPrimaryPosition(state: any, value: string): void {
+      state.primaryPosition = value;
+    },
+    setSecondaryPosition(state: any, value: string): void {
+      state.secondaryPosition = value;
     },
     setRoles(state: any, value: Array<string>): void {
       state.roles = value;

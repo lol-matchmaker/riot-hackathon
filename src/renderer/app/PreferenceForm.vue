@@ -69,12 +69,20 @@
           this.$store.commit('preferences/setLanguage', value);
         },
       },
-      positionPreference: {
+      primaryPositionPreference: {
         get() {
-          return this.$store.state.preferences.position;
+          return this.$store.state.preferences.primaryPosition;
         },
         set(value) {
-          this.$store.commit('preferences/setPosition', value);
+          this.$store.commit('preferences/setPrimaryPosition', value);
+        },
+      },
+      secondaryPositionPreference: {
+        get() {
+          return this.$store.state.preferences.secondaryPosition;
+        },
+        set(value) {
+          this.$store.commit('preferences/setSecondaryPosition', value);
         },
       },
     },
@@ -133,9 +141,24 @@
       </el-slider>
     </el-form-item>
 
-    <el-form-item label="Position">
-      <el-radio-group v-model="positionPreference">
-        <el-radio-button :label="label" :key="label" v-for="label in positions">
+    <el-form-item label="Primary Position">
+      <el-radio-group v-model="primaryPositionPreference">
+        <el-radio-button
+          :label="label"
+          :key="label"
+          :disabled="label == secondaryPositionPreference"
+          v-for="label in positions">
+        </el-radio-button>
+      </el-radio-group>
+    </el-form-item>
+
+    <el-form-item label="Secondary Position">
+      <el-radio-group v-model="secondaryPositionPreference">
+        <el-radio-button
+          :label="label"
+          :key="label"
+          :disabled="label == primaryPositionPreference"
+          v-for="label in positions">
         </el-radio-button>
       </el-radio-group>
     </el-form-item>
