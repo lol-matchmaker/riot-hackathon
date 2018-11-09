@@ -171,7 +171,6 @@ export class UiController
         if (ourPlayerInfo !== undefined) {
           console.log('Selecting our roles');
           for (let retryCount = 0; retryCount < 100; ++retryCount) {
-            await delay(1000);
             try {
               await this.checkedLcu().setLobbyPreferredRoles(
                   [ourPlayerInfo.role]);
@@ -180,6 +179,7 @@ export class UiController
               console.error('LCU error while inviting');
               console.error(lcuError);
             }
+            await delay(1000);
           }
         }
       }
