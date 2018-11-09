@@ -83,6 +83,9 @@ export class LcuEventDispatcher {
       try {
         listener(topic, payload);
       } catch (listenerError) {
+        console.error('Listener errored out');
+        console.error(listenerError);
+
         // Ignore errors and continue dispatch.
         console.error(listenerError);
       }
