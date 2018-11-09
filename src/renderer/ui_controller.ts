@@ -48,7 +48,8 @@ export class UiController
 
   public static serverWsUrl(): string {
     if (process.env.NODE_ENV !== 'production') {
-      return 'ws://127.0.0.1:3000';
+      // return 'ws://127.0.0.1:3000';
+      return 'ws://192.168.202.65:3000';
     } else {
       // TODO(pwnall): Real server?.
       return 'wss://example.com';
