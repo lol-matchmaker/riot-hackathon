@@ -3,6 +3,8 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import {
     Button,
+    Checkbox,
+    CheckboxGroup,
     Form,
     FormItem,
     Option,
@@ -20,6 +22,8 @@
   locale.use(lang)
 
   Vue.use(Button);
+  Vue.use(Checkbox);
+  Vue.use(CheckboxGroup);
   Vue.use(Form);
   Vue.use(FormItem);
   Vue.use(Option);
@@ -41,12 +45,12 @@
       };
     },
     computed: {
-      rolePreference: {
+      rolesPreference: {
         get() {
           return this.$store.state.preferences.roles;
         },
         set(value) {
-          this.$store.commit('preferences/setRole', value);
+          this.$store.commit('preferences/setRoles', value);
         },
       },
       intensityPreference: {
@@ -81,13 +85,13 @@
       sortByEnglishName: function (languages) {
         return languages.slice().sort((a, b) => a['englishName'].localeCompare(b['englishName']));
       },
-    }
+    },
   }
 </script>
 
 <style lang="scss">
   #preference-form {
-    .el-form-item {
+    .el-form-item, .el-checkbox {
       &__label {
         color: black;
       }
@@ -136,11 +140,18 @@
       </el-radio-group>
     </el-form-item>
 
-    <el-form-item label="Champion Role">
-      <el-radio-group v-model="rolePreference">
-        <el-radio-button :label="label" :key="label" v-for="label in roles">
-        </el-radio-button>
-      </el-radio-group>
+    <el-form-item label="Champion Role (Pick 2)">
+      <el-checkbox-group
+        v-model="rolesPreference"
+        :min="1"
+        :max="2">
+        <el-checkbox
+          v-for="role in roles"
+          :label="role"
+          :key="role"
+          border>
+        </el-checkbox>
+      </el-checkbox-group>
     </el-form-item>
 
     <el-form-item label="Chat Language">
