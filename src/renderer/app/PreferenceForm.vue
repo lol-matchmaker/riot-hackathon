@@ -1,7 +1,7 @@
 <script>
   import Vue from 'vue';
   import 'element-ui/lib/theme-chalk/index.css';
-  import { Form, FormItem, RadioGroup, RadioButton, Select, Option } from 'element-ui';
+  import { Button, Form, FormItem, RadioGroup, RadioButton, Select, Option } from 'element-ui';
   import { archetypes, positions } from './lol_preferences';
   import { languages } from './languages';
   import lang from 'element-ui/lib/locale/lang/en';
@@ -9,6 +9,7 @@
 
   locale.use(lang)
 
+  Vue.use(Button);
   Vue.use(Form);
   Vue.use(FormItem);
   Vue.use(RadioGroup);
@@ -77,7 +78,7 @@ li {
 </style>
 
 <template>
-  <el-form>
+  <el-form label-width="150px">
     <h2>My Preferences</h2>
     <p>Customize your next practice session.</p>
 
@@ -106,6 +107,11 @@ li {
           <span class="native">{{ language['nativeName'] }}</span>
         </el-option>
       </el-select>
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" plain>Save</el-button>
+      <el-button type="primary">Find Team</el-button>
     </el-form-item>
   </el-form>
 </template>
