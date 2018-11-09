@@ -58,13 +58,17 @@ export async function GetInvitationID(connection: LcuConnection, summonerID: str
     {
         return json["invitationId"]
     }
-
 }
 
 /** sends notifications to client **/
 export function sendNotification(notif: string, connection: LcuConnection)
 {
-    LCURequest('/lol-simple-dialog-messages/v1/messages', 'POST', notif, connection);
+    const data=
+        {
+            "msgBody": [notif],
+            "msgType": "string"
+        };
+    LCURequest('/lol-simple-dialog-messages/v1/messages', 'POST', data, connection);
 }
 
 /** Creates a game lobby of given game type**/
