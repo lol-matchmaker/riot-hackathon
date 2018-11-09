@@ -54,9 +54,12 @@
 </script>
 
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
 body {
   height: 100vh;
   margin: 0;
+  font-family: 'Roboto Condensed', sans-serif;
 
   > .el-container {
     height: 100%;
