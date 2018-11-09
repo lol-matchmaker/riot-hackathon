@@ -61,6 +61,5 @@
       :closable="false"
       show-icon>
     </el-alert>
-    <div>{{test}}</div>
   </div>
 </template>
