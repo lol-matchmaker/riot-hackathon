@@ -79,4 +79,10 @@ export class LcuHelper {
     await this.connection.request(
         'POST', '/lol-lobby/v2/lobby/matchmaking/search', {});
   }
+
+  /** Accept an invitation to a lobby. */
+  public async acceptLobbyInvite(invitationId: string): Promise<void> {
+    const url = `/lol-lobby/v2/received-invitations/${invitationId}/accept`;
+    await this.connection.request('POST', url, {});
+  }
 }

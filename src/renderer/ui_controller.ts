@@ -1,11 +1,12 @@
 import Vuex from 'vuex';
 
+import { roles } from './app/lol_preferences';
 import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
 import { LcuHelper } from './lcu_helper';
-import { LobbyData, LoginWatcher, LoginWatcherDelegate, LoginWatcherState }
-    from './login_watcher';
+import { IncomingInvite, LobbyData, LoginWatcher, LoginWatcherDelegate,
+         LoginWatcherState } from './login_watcher';
 import { WsConnection, WsConnectionDelegate, WsConnectionState }
     from './ws_connection';
 import { MatchedMessagePlayerInfo } from './ws_messages';
@@ -147,7 +148,25 @@ export class UiController
       summonerIds.add(playerInfo.summoner_id);
     }
 
-    // Only the first player is responsible for setting up the game.
+    // Select our roles if we still need to.
+    const ourSummonerId = this.loginWatcher.summonerId();
+    const ourMember =
+        lobby.members.find(member => member.summoner_id === ourSummonerId);
+    if (ourMember !== undefined) {
+      const hasUnselectedRole =
+          ourMember.roles.find(role => role === 'UNSELECTED') !== undefined;
+      if (hasUnselectedRole) {
+        const ourSummonerIdString = ourSummonerId.toString();
+        const ourPlayerInfo = playerInfos.find(
+            playerInfo => playerInfo.summoner_id === ourSummonerIdString);
+        if (ourPlayerInfo !== undefined) {
+          console.log('Selecting our roles');
+          await this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
+        }
+      }
+    }
+
+    // The first player starts the game after everyone selected roles.
     const firstPlayer = playerInfos[0];
     const ourAccountId = this.loginWatcher.accountId();
     if (firstPlayer.account_id !== ourAccountId.toString()) {
@@ -160,10 +179,11 @@ export class UiController
       if (!summonerIds.has(summonerId)) {
         continue;
       }
-      for (const role of member.roles) {
-        if (role === 'UNSELECTED') {
-          return;
-        }
+
+      const hasUnselectedRole =
+          roles.find(role => role === 'UNSELECTED') !== undefined;
+      if (hasUnselectedRole) {
+        return;
       }
     }
 
@@ -176,10 +196,18 @@ export class UiController
       const summonerId = invite.summoner_id.toString();
       summonerIds.delete(summonerId);
     }
-
     if (summonerIds.size === 0) {
       this.checkedLcu().startLobbyMatch();
     }
+  }
+  public async onIncomingInvitesChange(invites: IncomingInvite[]):
+      Promise<void> {
+    console.log('UIC onIncomingInvitesChange');
+    console.log(invites);
+    if (this.lastState !== 'matched') {
+      return;
+    }
+    await this.acceptMatchInviteIfPending();
   }
 
   private async authenticate(): Promise<void> {
@@ -190,6 +218,26 @@ export class UiController
     await this.checkedLcu().setVerificationToken(summonerId, token as string);
 
     this.wsConnection.sendAuth(accountId, summonerId);
+  }
+
+  private async acceptMatchInviteIfPending(): Promise<void> {
+    // "as MatchedMessagePlayerInfo[]" is safe because the match data is not
+    // null when the state is "matched".
+    const playerInfos =
+        this.wsConnection.matchData() as MatchedMessagePlayerInfo[];
+    const firstPlayer = playerInfos[0];
+    // LCU only deals with integer IDs.
+    const firstPlayerSummonerId = parseInt(firstPlayer.summoner_id, 10);
+
+    for (const invite of this.loginWatcher.invites()) {
+      if (invite.summoner_id !== firstPlayerSummonerId ||
+          invite.state === 'Accepted') {
+        continue;
+      }
+
+      await this.checkedLcu().acceptLobbyInvite(invite.invitation_id);
+      return;
+    }
   }
 
   private async setupMatch(): Promise<void> {
@@ -203,6 +251,7 @@ export class UiController
     const firstPlayer = playerInfos[0];
     const ourAccountId = this.loginWatcher.accountId();
     if (firstPlayer.account_id !== ourAccountId.toString()) {
+      await this.acceptMatchInviteIfPending();
       return;
     }
 
@@ -220,9 +269,6 @@ export class UiController
       const summonerId = parseInt(playerInfo.summoner_id, 10);
       await lcu.sendLobbyInvite(summonerId, playerInfo.summoner_name);
     }
-
-    // Choose positions.
-    await lcu.setLobbyPreferredRoles([playerInfos[0].role]);
   }
 
   /** FSM update logic. */
