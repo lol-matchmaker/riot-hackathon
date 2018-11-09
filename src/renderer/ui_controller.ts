@@ -71,10 +71,21 @@ export class UiController
   }
 
   public enterQueue(): void {
-    if (this.lastState !== 'ready') {
-      return;
+    console.log(this.vueStore);
+    var prefs = this.vueStore["_modules"]["root"]["_children"]["preferences"]["state"];
+    console.log(prefs);
+    var data = {
+        "accountId": this.loginWatcher.accountId(),
+        "roles": prefs["roles"],
+        "intensity": prefs["intensity"],
+        "position": prefs["position"],
+        "language": prefs["language"]
     }
-    this.wsConnection.requestQueue();
+    if (this.lastState !== 'ready') {
+      return; 
+    }
+    
+    this.wsConnection.requestQueue(data);
   }
 
   public exitQueue(): void {
