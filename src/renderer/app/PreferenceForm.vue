@@ -11,7 +11,7 @@
     Select,
     Slider,
   } from 'element-ui';
-  import { archetypes, intensities, positions } from './lol_preferences';
+  import { intensities, positions, roles } from './lol_preferences';
   import { languages } from './languages';
   import lang from 'element-ui/lib/locale/lang/en';
   import locale from 'element-ui/lib/locale';
@@ -35,18 +35,18 @@
     },
     data () {
       return {
-        archetypes,
         languages,
         positions,
+        roles,
       };
     },
     computed: {
-      archetypePreference: {
+      rolePreference: {
         get() {
-          return this.$store.state.preferences.archetype;
+          return this.$store.state.preferences.roles;
         },
         set(value) {
-          this.$store.commit('preferences/setArchetype', value);
+          this.$store.commit('preferences/setRole', value);
         },
       },
       intensityPreference: {
@@ -136,9 +136,9 @@
       </el-radio-group>
     </el-form-item>
 
-    <el-form-item label="Champion Archetype">
-      <el-radio-group v-model="archetypePreference">
-        <el-radio-button :label="label" :key="label" v-for="label in archetypes">
+    <el-form-item label="Champion Role">
+      <el-radio-group v-model="rolePreference">
+        <el-radio-button :label="label" :key="label" v-for="label in roles">
         </el-radio-button>
       </el-radio-group>
     </el-form-item>

@@ -1,4 +1,4 @@
-export const archetypes = [
+export const roles = [
   'Assassin',
   'Fighter',
   'Mage',

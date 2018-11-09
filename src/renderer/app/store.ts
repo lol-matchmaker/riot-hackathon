@@ -20,15 +20,12 @@ const lcu = {
 const preferences = {
   namespaced: true,
   state: {
-    archetype: null,
     intensity: null,
     language: null,
     position: null,
+    role: null,
   },
   mutations: {
-    setArchetype(state: any, value: string): void {
-      state.archetype = value;
-    },
     setIntensity(state: any, value: number): void {
       state.intensity = value;
     },
@@ -37,6 +34,9 @@ const preferences = {
     },
     setPosition(state: any, value: string): void {
       state.position = value;
+    },
+    setRole(state: any, value: string): void {
+      state.role = value;
     },
   },
 };
