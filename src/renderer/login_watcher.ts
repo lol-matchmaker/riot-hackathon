@@ -110,7 +110,7 @@ export class LoginWatcher {
       loginSession = await connection.request('GET', '/lol-login/v1/session');
     } catch (readError) {
       // Read failures means the client is missing. Therefore, logged out.
-      this.updateLoginSession({});
+      this.updateLoginSession(null);
       return;
     }
     this.updateLoginSession(loginSession);
@@ -121,13 +121,14 @@ export class LoginWatcher {
       return;
     }
     const loginSession = payload.data;
-    if (typeof loginSession !== 'object') {
-      return;
-    }
     this.updateLoginSession(loginSession);
   }
 
   private updateLoginSession(loginSession: any): void {
+    if (typeof loginSession !== 'object' || loginSession === null) {
+      this.resetLoginSession();
+      return;
+    }
     const accountId = loginSession.accountId;
     if (typeof accountId !== 'number' || accountId === 0) {
       this.resetLoginSession();

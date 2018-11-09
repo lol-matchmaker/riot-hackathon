@@ -168,7 +168,11 @@ export class UiController
             playerInfo => playerInfo.summoner_id === ourSummonerIdString);
         if (ourPlayerInfo !== undefined) {
           console.log('Selecting our roles');
-          await this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
+          // setTimeout(
+          //     () => {
+          this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
+          //    },
+          //     1000);
         }
       }
     }
