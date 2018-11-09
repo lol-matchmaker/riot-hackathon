@@ -1,8 +1,17 @@
 <script>
   import Vue from 'vue';
   import 'element-ui/lib/theme-chalk/index.css';
-  import { Button, Form, FormItem, RadioGroup, RadioButton, Select, Option } from 'element-ui';
-  import { archetypes, positions } from './lol_preferences';
+  import {
+    Button,
+    Form,
+    FormItem,
+    Option,
+    RadioButton,
+    RadioGroup,
+    Select,
+    Slider,
+  } from 'element-ui';
+  import { archetypes, intensities, positions } from './lol_preferences';
   import { languages } from './languages';
   import lang from 'element-ui/lib/locale/lang/en';
   import locale from 'element-ui/lib/locale';
@@ -13,10 +22,11 @@
   Vue.use(Button);
   Vue.use(Form);
   Vue.use(FormItem);
-  Vue.use(RadioGroup);
-  Vue.use(RadioButton);
-  Vue.use(Select);
   Vue.use(Option);
+  Vue.use(RadioButton);
+  Vue.use(RadioGroup);
+  Vue.use(Select);
+  Vue.use(Slider);
 
   export default {
     name: 'preference-form',
@@ -39,6 +49,14 @@
           this.$store.commit('preferences/setArchetype', value);
         },
       },
+      intensityPreference: {
+        get() {
+          return this.$store.state.preferences.intensity;
+        },
+        set(value) {
+          this.$store.commit('preferences/setIntensity', value);
+        }
+      },
       languagePreference: {
         get() {
           return this.$store.state.preferences.language;
@@ -57,6 +75,9 @@
       },
     },
     methods: {
+      intensityLabel: function (intensity) {
+        return intensities[intensity / 25];
+      },
       sortByEnglishName: function (languages) {
         return languages.slice().sort((a, b) => a['englishName'].localeCompare(b['englishName']));
       },
@@ -78,6 +99,9 @@
   h2, p {
     text-align: center;
   }
+  .el-slider {
+    width: 500px;
+  }
   .el-select {
     width: 300px;
   }
@@ -95,6 +119,15 @@
   <el-form label-width="150px" id="preference-form">
     <h2>My Preferences</h2>
     <p>Customize your next practice session.</p>
+
+    <el-form-item label="Intensity">
+      <el-slider
+        v-model="intensityPreference"
+        :step="25"
+        :format-tooltip="intensityLabel"
+        show-stops>
+      </el-slider>
+    </el-form-item>
 
     <el-form-item label="Position">
       <el-radio-group v-model="positionPreference">

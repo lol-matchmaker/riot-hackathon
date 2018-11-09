@@ -7,6 +7,14 @@ export const archetypes = [
   'Tank',
 ];
 
+export const intensities = [
+  'Super casual',
+  'Casual',
+  'Slightly competitive',
+  'Moderately competitive',
+  'Super competitive'
+];
+
 export const positions = [
   'Top',
   'Jungle',

@@ -21,12 +21,16 @@ const preferences = {
   namespaced: true,
   state: {
     archetype: null,
+    intensity: null,
     language: null,
     position: null,
   },
   mutations: {
     setArchetype(state: any, value: string): void {
       state.archetype = value;
+    },
+    setIntensity(state: any, value: number): void {
+      state.intensity = value;
     },
     setLanguage(state: any, value: string): void {
       state.language = value;
