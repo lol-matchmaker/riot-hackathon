@@ -39,21 +39,26 @@ export function Setposition(positionOne: string, positionTwo: string, connection
 }
 
 
-export function GetInvitationID(connection: LcuConnection)
+ export async function GetInvitationID(connection: LcuConnection, summonerID: string)
 {
-    var json = LCURequest('/lol-lobby/v2/received-invitations', 'GET', {}, connection);
-    // @ts-ignore
-    return json["invitationId"];
+
+    var json = await LCURequest('/lol-lobby/v2/received-invitations', 'GET', {}, connection);
+    if(+summonerID == +json["fromSummonerId"])
+    {
+        return json["invitationId"]
+    }
+
 }
 
 
-export function CreateLobby(connection: LcuConnection)
+export function CreateLobby(queID: number, connection: LcuConnection)
 {
+    //430 is blind
     var data =
         {
             "gameCustomization": {},
             "isCustom": false,
-            "queueId": 430
+            "queueId": queID
         };
     LCURequest('/lol-lobby/v2/lobby', 'POST', data, connection);
 }
