@@ -5,7 +5,7 @@ import {LcuConnection} from "./lcu/connection";
 export function SetupParty(queueid: number, playerdatalist, connection: LcuConnection, roles: string[])
 {
     CreateLobby(queueid, connection);
-    SendAllInvites(playerdatalist, connection)
+    SendAllInvites(playerdatalist, connection);
     Setposition(roles[0], roles[1], connection);
 }
 
