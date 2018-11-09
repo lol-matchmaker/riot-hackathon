@@ -18,17 +18,27 @@
   Vue.use(Alert);
 
   const attrsByStatus = {
-    'offline': {
+    'lcu-offline': {
       main: 'League of Legends client is offline',
       sub: 'Launch League of Legends',
       level: 'info',
     },
-    'online': {
+    'lcu-online': {
       main: 'League of Legends client is online',
       sub: 'Sign into the League of Legends application',
       level: 'info',
     },
-    'signedin': {
+    'connecting': {
+      main: 'Signed into the League of Legends application',
+      sub: 'Fetching your preferences profile....',
+      level: 'success',
+    },
+    'challenged': {
+      main: 'Signed into the League of Legends application',
+      sub: 'Fetching your preferences profile....',
+      level: 'success',
+    },
+    'ready': {
       main: 'Signed into the League of Legends application',
       sub: 'Fetching your preferences profile....',
       level: 'success',

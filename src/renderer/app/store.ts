@@ -1,17 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { UiControllerState } from '../ui_controller';
 
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
-type LcuStatusType = 'offline' | 'online' | 'signedin';
 const lcu = {
   namespaced: true,
   state: {
-    status: 'offline',
+    status: 'lcu-offline',
   },
   mutations: {
-    setStatus(state: any, value: LcuStatusType): void {
+    setStatus(state: any, value: UiControllerState): void {
       state.status = value;
     },
   },

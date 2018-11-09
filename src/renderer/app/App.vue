@@ -4,7 +4,7 @@
       <h1>Ohai</h1>
     </el-header>
     <el-main>
-      <div v-if="lcuStatus == 'signedin'">
+      <div v-if="lcuStatus == 'ready'">
         <preference-form></preference-form>
       </div>
       <div v-else>

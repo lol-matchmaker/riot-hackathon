@@ -1,7 +1,7 @@
 import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
 
-type LoginWatcherState = 'offline' | 'online' | 'signedin' | null;
+export type LoginWatcherState = 'lcu-offline' | 'lcu-online' | 'lcu-signedin';
 
 export interface LoginWatcherDelegate {
   onLoginChange(state: LoginWatcherState): void;
@@ -42,7 +42,7 @@ export class LoginWatcher {
 
   public accountId(): number { return this.lastAccountId; }
   public connection(): LcuConnection | null { return this.lastConnection; }
-  public state(): LoginWatcherState { return this.lastState; }
+  public state(): LoginWatcherState | null { return this.lastState; }
   public summonerId(): number { return this.lastSummonerId; }
 
   private onConnectionOnline(_topic: string, payload: any): void {
@@ -54,6 +54,7 @@ export class LoginWatcher {
 
   private onConnectionOffline(_topic: string, _payload: LcuConnection): void {
     this.isConnected = false;
+    this.lastConnection = null;
     // Client missing, definitely logged out.
     this.updateLoginSession({});
   }
@@ -97,13 +98,13 @@ export class LoginWatcher {
 
     this.lastAccountId = accountId;
     this.lastSummonerId = summonerId;
-    this.setState('signedin');
+    this.setState('lcu-signedin');
   }
 
   private resetLoginSession(): void {
     this.lastAccountId = 0;
     this.lastSummonerId = 0;
-    this.setState(this.isConnected ? 'online' : 'offline');
+    this.setState(this.isConnected ? 'lcu-online' : 'lcu-offline');
   }
 
   private setState(state: LoginWatcherState): void {

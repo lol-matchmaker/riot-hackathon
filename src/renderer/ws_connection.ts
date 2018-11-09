@@ -1,9 +1,11 @@
 import WebSocket = require('ws');
 import { AuthMessage } from './ws_messages';
 
+export type WsConnectionState =
+    'connecting' | 'challenged' | 'ready' | 'queued' | 'matched';
+
 export interface WsConnectionDelegate {
-  onChallenge(): void;
-  onReady(): void;
+  onWsStateChange(state: WsConnectionState): void;
 }
 
 /** WebSocket connection to our server. */
@@ -14,10 +16,8 @@ export class WsConnection {
   private readonly wsUrl: string;
   /** Number of ms between WebSocket reconnection attempts. */
   private readonly reconnectMs: number;
-  /** True if the server has accepted our credentials. */
-  private authenticated: boolean;
-  /** True if we have a socket connected to our server. */
-  private isConnected: boolean;
+  /** Last reported state. */
+  private lastState: WsConnectionState;
   /** The last challenge token sent by the server. */
   private lastToken: string | null;
   /** ws connection to our server. */
@@ -28,32 +28,37 @@ export class WsConnection {
     this.wsUrl = wsUrl;
     // TODO(pwnall): Better value that doesn't DDOS the server.
     this.reconnectMs = 1000;
-    this.authenticated = false;
-    this.isConnected = false;
     this.lastToken = null;
+    this.lastState = 'connecting';
 
     this.socket = this.createSocket();
   }
 
   /** True if the server has accepted our credentials. */
-  public isAuthenticated(): boolean { return this.authenticated; }
+  public state(): WsConnectionState { return this.lastState; }
   /** The last challenge token sent by the server. */
   public token(): string | null { return this.lastToken; }
 
   /** Tells the server that we've set the summoner verification string. */
   public sendAuth(accountId: string, summonerId: string): void {
-    if (!this.isConnected) {
+    if (this.lastState === 'connecting') {
       throw new Error('Server WS not connected!');
     }
     const message: AuthMessage = { type: 'auth', accountId, summonerId };
     this.socket.send(JSON.stringify(message));
   }
 
+  /** Signals the server that the LCU client is no longer online. */
+  public reset(): void {
+    if (this.lastState === 'connecting' || this.lastState === 'challenged') {
+      return;
+    }
+    // The socket will be closed, forcing a reset on the server side.
+    this.socket.close();
+  }
+
   /** (Re)opens a WebSocket connection to the server. */
   private createSocket(): WebSocket {
-    if (this.isConnected) {
-      throw new Error('Server WS already connected');
-    }
     const socket: WebSocket = new WebSocket(this.wsUrl, 'lolhack', {
       rejectUnauthorized: false,
     });
@@ -65,15 +70,13 @@ export class WsConnection {
   }
 
   private reconnect(): void {
-    this.lastToken = null;
-    this.authenticated = false;
-    this.isConnected = false;
     this.socket = this.createSocket();
   }
 
   private onWsClose(_: CloseEvent): void {
     console.log('Server WS closed');
-    this.isConnected = false;
+    this.lastToken = null;
+    this.setState('connecting');
     setTimeout(this.reconnect.bind(this), this.reconnectMs);
   }
 
@@ -88,13 +91,11 @@ export class WsConnection {
 
     switch (message.type) {
       case 'challenge':
-        this.isConnected = true;
         this.lastToken = message.token;
-        this.delegate.onChallenge();
+        this.setState('challenged');
         break;
       case 'ready':
-        this.authenticated = true;
-        this.delegate.onReady();
+        this.setState('ready');
         break;
       default:
         console.error('Unknown message from Server WS. Pls update client?');
@@ -107,4 +108,11 @@ export class WsConnection {
     console.log('Server WS open');
   }
 
+  private setState(state: WsConnectionState): void {
+    if (this.lastState === state) {
+      return;
+    }
+    this.lastState = state;
+    this.delegate.onWsStateChange(state);
+  }
 }
