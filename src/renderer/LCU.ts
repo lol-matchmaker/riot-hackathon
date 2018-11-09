@@ -31,6 +31,10 @@ export function SendPlayerInvite(summonerid: number, connection: LcuConnection)
     LCURequest('/lol-lobby/v2/eog-invitations', 'POST', notificationData, connection)
 }
 
+export function StartQueue(connections: LcuConnection)
+{
+    LCURequest('/lol-lobby/v2/lobby/matchmaking/search', 'POST', {}, connections);
+}
 /**Accepts any open invites **/
 export function AcceptInvites(fromSummonerID: string, invitationID: string, connection: LcuConnection, )
 {
@@ -83,6 +87,7 @@ export function CreateLobby(queueID: number, connection: LcuConnection)
         };
     LCURequest('/lol-lobby/v2/lobby', 'POST', data, connection);
 }
+
 
 /** Executes a LCU request given a connection **/
 // @ts-ignore
