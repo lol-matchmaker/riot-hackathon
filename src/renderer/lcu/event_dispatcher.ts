@@ -24,6 +24,7 @@ export class LcuEventDispatcher {
     if (topicListeners === undefined) {
       topicListeners = new Set();
       this.listeners.set(topic, topicListeners);
+      console.log(`WAMP new topic: ${topic}`);
       this.wampSubscribe(topic);
     }
 
@@ -74,6 +75,7 @@ export class LcuEventDispatcher {
 
   /** Dispatch an event to all interested listeners. */
   public dispatchEvent(topic: string, payload: any): void {
+    console.log(`WAMP event - topic: ${topic}`);
     const topicListeners = this.listeners.get(topic);
     if (topicListeners === undefined) {
       return;
