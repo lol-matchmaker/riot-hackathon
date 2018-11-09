@@ -60,25 +60,35 @@
   }
 </script>
 
-<style lang="scss" scoped>
-h2, p {
-  text-align: center;
-}
-.el-select {
-  width: 300px;
-}
-li {
-  display: flex;
-  justify-content: space-between;
-
-  .en {
-    font-weight: bold;
+<style lang="scss">
+  #preference-form {
+    .el-form-item {
+      &__label {
+        color: black;
+      }
+    }
   }
-}
+</style>
+
+<style lang="scss" scoped>
+  h2, p {
+    text-align: center;
+  }
+  .el-select {
+    width: 300px;
+  }
+  .el-select-dropdown__item {
+    display: flex;
+    justify-content: space-between;
+
+    .en {
+      font-weight: bold;
+    }
+  }
 </style>
 
 <template>
-  <el-form label-width="150px">
+  <el-form label-width="150px" id="preference-form">
     <h2>My Preferences</h2>
     <p>Customize your next practice session.</p>
 
