@@ -45,7 +45,7 @@ export class LcuHelper {
 
   /** Create a game lobby. */
   public async createLobby(queueId: number): Promise<void> {
-    const gameConfig = {
+    /*const gameConfig = {
       "allowablePremadeSizes": [
         1,
         2,
@@ -70,13 +70,45 @@ export class LcuHelper {
       "maxTeamSize": 5,
       "pickType": "",
       "premadeSizeAllowed": true,
-      "showPositionSelector": true
+      "queueId": queueId,
+      "showPositionSelector": true,
     };
     const lobbyData = {
       gameConfig,
       gameCustomization: {},
-      isCustom: false,
-      queueId,
+    };*/
+
+    const lobbyData = {
+      "queueId": queueId,
+      "gameConfig": {
+        "allowablePremadeSizes": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "customLobbyName": "",
+        "customMutatorName": "",
+        "customRewardsDisabledReasons": [],
+        "customSpectatorPolicy": "NotAllowed",
+        "customSpectators": [],
+        "customTeam100": [],
+        "customTeam200": [],
+        "gameMode": "CLASSIC",
+        "isCustom": false,
+        "isLobbyFull": false,
+        "isTeamBuilderManaged": false,
+        "mapId": 11,
+        "maxHumanPlayers": 0,
+        "maxLobbySize": 5,
+        "maxTeamSize": 5,
+        "pickType": "",
+        "premadeSizeAllowed": true,
+        "queueId": queueId,
+        "showPositionSelector": true
+      },
+      "restrictions": []
     };
     console.log('Creating lobby');
     console.log(lobbyData);
