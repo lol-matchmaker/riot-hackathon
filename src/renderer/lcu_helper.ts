@@ -80,6 +80,7 @@ export class LcuHelper {
 
     const lobbyData = {
       "queueId": queueId,
+      "canStartActivity": false,
       "gameConfig": {
         "allowablePremadeSizes": [
           1,
@@ -100,7 +101,7 @@ export class LcuHelper {
         "isLobbyFull": false,
         "isTeamBuilderManaged": false,
         "mapId": 11,
-        "maxHumanPlayers": 0,
+        "maxHumanPlayers": 5,
         "maxLobbySize": 5,
         "maxTeamSize": 5,
         "pickType": "",
@@ -108,7 +109,8 @@ export class LcuHelper {
         "queueId": queueId,
         "showPositionSelector": true
       },
-      "restrictions": []
+      "partyType": "closed",
+      "restrictions": [],
     };
     console.log('Creating lobby');
     console.log(lobbyData);

@@ -172,7 +172,7 @@ export class UiController
               () => {
                 this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
               },
-              1000);
+              5000);
         }
       }
     }
@@ -270,16 +270,20 @@ export class UiController
     const lcu = this.checkedLcu();
     await lcu.createLobby(400);  // 400 is draft, 430 is blind.
 
-    // Invite players to the lobby.
-    for (const playerInfo of playerInfos) {
-      // LCU only deals with integers, so this had better be an integer.
-      const accountId = parseInt(playerInfo.account_id, 10);
-      if (accountId === ourAccountId) {
-        continue;
+
+    setTimeout(async () => {
+      // Invite players to the lobby.
+      for (const playerInfo of playerInfos) {
+        // LCU only deals with integers, so this had better be an integer.
+        const accountId = parseInt(playerInfo.account_id, 10);
+        if (accountId === ourAccountId) {
+          continue;
+        }
+        const summonerId = parseInt(playerInfo.summoner_id, 10);
+        await lcu.sendLobbyInvite(summonerId, playerInfo.summoner_name);
       }
-      const summonerId = parseInt(playerInfo.summoner_id, 10);
-      await lcu.sendLobbyInvite(summonerId, playerInfo.summoner_name);
-    }
+
+    }, 5000);
   }
 
   /** FSM update logic. */
