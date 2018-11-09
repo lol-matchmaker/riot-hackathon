@@ -1,14 +1,21 @@
 <script>
   import Vue from 'vue';
-  import { Container, Header, Main, Footer } from 'element-ui';
+  import {
+    Container,
+    Footer,
+    Header,
+    Main,
+    Row,
+  } from 'element-ui';
   import { store } from './store';
   import FlowStatus from './FlowStatus';
   import PreferenceForm from './PreferenceForm';
 
   Vue.use(Container);
+  Vue.use(Footer);
   Vue.use(Header);
   Vue.use(Main);
-  Vue.use(Footer);
+  Vue.use(Row);
 
   export default {
     name: 'app',
@@ -57,11 +64,15 @@ body {
 <template>
   <el-container :style="{ background: overlayCss + ', url(' + backgroundImageUrl + ') center/cover' }">
     <el-header>
-      <h1>Ohai</h1>
+      <el-row type="flex" justify="center">
+        <h1>Ohai</h1>
+      </el-row>
     </el-header>
     <el-main>
       <div v-if="lcuStatus == 'ready'">
-        <preference-form></preference-form>
+        <el-row type="flex" justify="center">
+          <preference-form></preference-form>
+        </el-row>
       </div>
       <div v-else>
       </div>
