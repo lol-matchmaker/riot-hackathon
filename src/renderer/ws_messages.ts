@@ -39,7 +39,7 @@ export interface DequeuedMessage {
 
 /** A role in the Server -> Client matchmaking packet. */
 export type MatchedMessagePlayerRole =
-    'TOP' | 'JUNGLE' | 'MIDDLE' | 'BOTTOM' | 'SUPPORT';
+    'TOP' | 'JUNGLE' | 'MIDDLE' | 'BOTTOM' | 'UTILITY';
 
 /** Per-player information in the Server -> Client matchmaking packet. */
 export interface MatchedMessagePlayerInfo {
