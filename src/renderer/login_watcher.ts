@@ -1,9 +1,10 @@
 import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
 
+type LoginWatcherState = 'offline' | 'online' | 'signedin' | null;
+
 export interface LoginWatcherDelegate {
-  onLoginChange(state: 'offline' | 'online' | 'signedin',
-                accountId: number, summonerId: number): void;
+  onLoginChange(state: LoginWatcherState): void;
 }
 
 /** Monitors whether a user logs on or off. */
@@ -19,7 +20,7 @@ export class LoginWatcher {
   /** True if an online connection exists. */
   private isConnected: boolean;
   /** The most recent state reported to the delegate. */
-  private lastState: 'online' | 'offline' | 'signedin' | null;
+  private lastState: LoginWatcherState | null;
 
   constructor(eventDispatcher: LcuEventDispatcher,
               delegate: LoginWatcherDelegate) {
@@ -34,13 +35,14 @@ export class LoginWatcher {
         'OnJsonApiEvent_lol-login_v1_session',
         this.onLoginSessionChange.bind(this));
     eventDispatcher.addListener(
-        '@-online', this.onConnectionOnline.bind(this));
+        '@-lcu-online', this.onConnectionOnline.bind(this));
     eventDispatcher.addListener(
-        '@-offline', this.onConnectionOffline.bind(this));
+        '@-lcu-offline', this.onConnectionOffline.bind(this));
   }
 
   public accountId(): number { return this.lastAccountId; }
   public connection(): LcuConnection | null { return this.lastConnection; }
+  public state(): LoginWatcherState { return this.lastState; }
   public summonerId(): number { return this.lastSummonerId; }
 
   private onConnectionOnline(_topic: string, payload: any): void {
@@ -104,12 +106,12 @@ export class LoginWatcher {
     this.setState(this.isConnected ? 'online' : 'offline');
   }
 
-  private setState(state: 'offline' | 'online' | 'signedin'): void {
+  private setState(state: LoginWatcherState): void {
     if (this.lastState === state) {
       return;
     }
 
     this.lastState = state;
-    this.delegate.onLoginChange(state, this.lastAccountId, this.lastSummonerId);
+    this.delegate.onLoginChange(state);
   }
 }

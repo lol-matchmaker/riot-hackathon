@@ -110,7 +110,7 @@ export class LcuClientWatcher {
     if (knownGoodPath !== null) {
       this.addKnownGoodPath(knownGoodPath);
     }
-    this.eventDispatcher.dispatchEvent('@-online',
+    this.eventDispatcher.dispatchEvent('@-lcu-online',
                                        { connection, watcher: this });
   }
   private onConnectionOffline(connection: LcuConnection): void {
@@ -128,7 +128,7 @@ export class LcuClientWatcher {
     if (this.onlineConnections.size === 0 && this.knownGoodPaths.size === 0) {
       this.processWatcher.start();
     }
-    this.eventDispatcher.dispatchEvent('@-offline',
+    this.eventDispatcher.dispatchEvent('@-lcu-offline',
                                        { connection, watcher: this });
   }
 
