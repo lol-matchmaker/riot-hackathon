@@ -20,27 +20,27 @@
   const attrsByStatus = {
     'lcu-offline': {
       main: 'League of Legends client is offline',
-      sub: 'Launch League of Legends',
+      sub: 'Launch League of Legends.',
       level: 'info',
     },
     'lcu-online': {
       main: 'League of Legends client is online',
-      sub: 'Sign into the League of Legends application',
+      sub: 'Sign into the League of Legends application.',
       level: 'info',
     },
     'connecting': {
-      main: 'Signed into the League of Legends application',
-      sub: 'Fetching your preferences profile....',
-      level: 'success',
+      main: 'Oh noes! Can not connect to our server',
+      sub: 'Time to debug the server. Woot!',
+      level: 'error',
     },
     'challenged': {
-      main: 'Signed into the League of Legends application',
-      sub: 'Fetching your preferences profile....',
-      level: 'success',
+      main: 'Blast! Can not drive the LCU',
+      sub: 'Time to debug the client. Wee!',
+      level: 'error',
     },
     'ready': {
-      main: 'Signed into the League of Legends application',
-      sub: 'Fetching your preferences profile....',
+      main: 'Profile loaded and ready to begin!',
+      sub: 'Set your matchmaking preferences and queue up!',
       level: 'success',
     },
   };
