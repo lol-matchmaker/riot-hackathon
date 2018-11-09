@@ -45,24 +45,21 @@ export class LcuHelper {
 
   /** Create a game lobby. */
   public async createLobby(queueId: number): Promise<void> {
-    const lobbySkeleton = {
+    const lobbyData = {
       gameCustomization: {},
       isCustom: false,
       queueId,
     };
-    const lobbyData = await this.connection.request(
-        'POST', '/lol-lobby/v2/lobby', lobbySkeleton);
-    console.log(lobbyData);
+    await this.connection.request('POST', '/lol-lobby/v2/lobby', lobbyData);
   }
 
   /** Invite some players to a lobby. */
   public async sendLobbyInvite(summonerId: number,
                                summonerName: string): Promise<void> {
-    const invitation = await this.connection.request(
+    await this.connection.request(
         'POST', '/lol-lobby/v2/eog-invitations',
         [{ state: 'Requested', timeStamp: (new Date()).toISOString(),
           toSummonerId: summonerId, toSummonerName: summonerName }]);
-    console.log(invitation);
   }
 
   /** Set a position in a game lobby. */

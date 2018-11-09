@@ -181,7 +181,7 @@ export class UiController
       }
 
       const hasUnselectedRole =
-          roles.find(role => role === 'UNSELECTED') !== undefined;
+          member.roles.find(role => role === 'UNSELECTED') !== undefined;
       if (hasUnselectedRole) {
         return;
       }
