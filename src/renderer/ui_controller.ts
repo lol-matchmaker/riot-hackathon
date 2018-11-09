@@ -172,7 +172,8 @@ export class UiController
           for (let retryCount = 0; retryCount < 100; ++retryCount) {
             await delay(1000);
             try {
-              this.checkedLcu().setLobbyPreferredRoles([ourPlayerInfo.role]);
+              await this.checkedLcu().setLobbyPreferredRoles(
+                  [ourPlayerInfo.role]);
               break;
             } catch (lcuError) {
               console.error('LCU error while inviting');
