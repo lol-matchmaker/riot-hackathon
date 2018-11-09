@@ -1,5 +1,13 @@
 import {LcuConnection} from "./lcu/connection";
 
+/**Used to setup the lobbt and select roles for leader **/
+// @ts-ignore
+export function SetupParty(queueid: number, playerdatalist, connection: LcuConnection, roles: string[])
+{
+    CreateLobby(queueid, connection);
+    SendAllInvites(playerdatalist, connection)
+    Setposition(roles[0], roles[1], connection);
+}
 
 /**Send all invites to the player given an dict of player summoner ids **/
 // @ts-ignore
