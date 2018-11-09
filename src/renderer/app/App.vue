@@ -28,7 +28,7 @@
       return {
         connectedImageUrl: 'https://lolstatic-a.akamaihd.net/frontpage/apps/prod/artbook/en_US/f31d8b829b603b4b65fdff2475bd0803ced0179d/assets/content/champion/16_end/end_01.jpg',
         disconnectedImageUrl: 'https://lolstatic-a.akamaihd.net/frontpage/apps/prod/artbook/en_US/f31d8b829b603b4b65fdff2475bd0803ced0179d/assets/content/champion/00_intro/intro_01.jpg',
-        overlayCss: 'linear-gradient(rgba(128, 128, 128, 0.5), rgba(128, 128, 128, 0.9))',
+        overlayCss: 'linear-gradient(rgba(0, 0, 0, 0.9), rgba(127, 0, 255, 0.6))',
       }
     },
     computed: {
@@ -65,7 +65,6 @@ body {
     height: 100%;
   }
 }
-
 </style>
 
 <template>

@@ -100,7 +100,9 @@
 <style lang="scss">
   #preference-form {
     .el-form-item__label {
-      color: black;
+      color: white;
+      font-weight: bold;
+      padding-right: 20px;
     }
     .el-checkbox__input:not(.is-checked) + .el-checkbox__label {
       color: white;
@@ -111,6 +113,13 @@
 <style lang="scss" scoped>
   h2, p {
     text-align: center;
+    color: white;
+  }
+  h2 {
+    font-size: 2em;
+  }
+  p {
+    font-weight: bold;
   }
   .el-checkbox {
     background-color: rgba(0, 0, 0, 0.25);
