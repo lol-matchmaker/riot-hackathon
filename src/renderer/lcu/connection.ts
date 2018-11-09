@@ -119,9 +119,14 @@ export class LcuConnection {
       json: false,
       method: httpMethod,
       rejectUnauthorized: false,
+      simple: true,  // Get a rejection for non-200 HTTP status codes.
       url: this.rootUrl + url,
     });
 
+    if (body.length === 0) {
+      // Some API calls return an empty body instead of a JSON response.
+      return null;
+    }
     return JSON.parse(body);
   }
 

@@ -3,11 +3,11 @@ import Vuex from 'vuex';
 import { LcuClientWatcher } from './lcu/client_watcher';
 import { LcuConnection } from './lcu/connection';
 import { LcuEventDispatcher } from './lcu/event_dispatcher';
+import { LcuHelper } from './lcu_helper';
 import { LoginWatcher, LoginWatcherDelegate, LoginWatcherState }
     from './login_watcher';
 import { WsConnection, WsConnectionDelegate, WsConnectionState }
     from './ws_connection';
-import { LcuHelper } from './lcu_helper';
 
 export type UiControllerState =
     'lcu-offline' | 'lcu-online' | WsConnectionState;
@@ -66,7 +66,7 @@ export class UiController
     return this.lcu;
   }
 
-  public queueUp(): void {
+  public enterQueue(): void {
     if (this.lastState !== 'ready') {
       return;
     }
