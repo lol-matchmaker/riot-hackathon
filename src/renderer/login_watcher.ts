@@ -72,9 +72,13 @@ export class LoginWatcher {
     eventDispatcher.addListener(
         'OnJsonApiEvent_lol-lobby_v2_lobby',
         this.onLobbyChange.bind(this));
+    // These are unreliable.
+    // eventDispatcher.addListener(
+    //     'OnJsonApiEvent_lol-lobby_v2_received-invitations',
+    //     this.onInvitationsChange.bind(this));
     eventDispatcher.addListener(
-        'OnJsonApiEvent_lol-lobby_v2_received-invitations',
-        this.onInvitationsChange.bind(this));
+        'OnJsonApiEvent',
+        this.onJsonApiEvent.bind(this));
     eventDispatcher.addListener(
         '@-lcu-online', this.onConnectionOnline.bind(this));
     eventDispatcher.addListener(
@@ -100,6 +104,15 @@ export class LoginWatcher {
     this.lastConnection = null;
     // Client missing, definitely logged out.
     this.updateLoginSession({});
+  }
+
+  private onJsonApiEvent(_: string, payload: any): void {
+    // Workaround for unreliable invitation delivery.
+    if (payload.uri === '/lol-lobby/v2/received-invitations') {
+      this.onInvitationsChange(
+          'OnJsonApiEvent_lol-lobby_v2_received-invitations',
+          { data: payload.data });
+    }
   }
 
   private async updateLoginSessionFrom(connection: LcuConnection):
