@@ -70,6 +70,8 @@ export class UiController
 
   // WsConnectionDelegate
   public onWsStateChange(state: WsConnectionState): void {
+    console.log(`WSConnection state: ${state}`);
+
     if (this.loginWatcher.state() !== 'lcu-signedin') {
       return;
     }
@@ -88,6 +90,7 @@ export class UiController
       this.lcuConnection = null;
       this.wsConnection.reset();
       this.setState(state);
+      return;
     }
 
     // When signed in, the state comes from the WebSocket connection.
