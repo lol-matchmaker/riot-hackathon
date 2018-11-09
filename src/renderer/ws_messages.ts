@@ -37,10 +37,16 @@ export interface DequeuedMessage {
   type: 'dequeued';
 }
 
+/** A role in the Server -> Client matchmaking packet. */
+export type MatchedMessagePlayerRole =
+    'TOP' | 'JUNGLE' | 'MIDDLE' | 'BOTTOM' | 'SUPPORT';
+
 /** Per-player information in the Server -> Client matchmaking packet. */
 export interface MatchedMessagePlayerInfo {
   account_id: string;
   summoner_id: string;
+  summoner_name: string;
+  role: MatchedMessagePlayerRole;
 }
 
 /** Server -> Client: Player is in match. */

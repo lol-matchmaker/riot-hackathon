@@ -7,6 +7,7 @@ import { LoginWatcher, LoginWatcherDelegate, LoginWatcherState }
     from './login_watcher';
 import { WsConnection, WsConnectionDelegate, WsConnectionState }
     from './ws_connection';
+import { LcuHelper } from './lcu_helper';
 
 export type UiControllerState =
     'lcu-offline' | 'lcu-online' | WsConnectionState;
@@ -24,22 +25,22 @@ export class UiController
   public readonly wsConnection: WsConnection;
 
   private lastState: UiControllerState;
-  /** Last known-good LCU connection. */
-  private lcuConnection: LcuConnection | null;
+  /** Last known-good LCU connection, wrapped in an LcuHelper. */
+  private lcu: LcuHelper | null;
   /** The URL of our WebSockets server.  */
   private readonly wsUrl: string;
 
   constructor(vueStore: any) {  // Should be Vuex.Store.
     this.eventDispatcher = new LcuEventDispatcher();
     this.lastState = 'lcu-offline';
-    this.lcuConnection = null;
+    this.lcu = null;
     this.loginWatcher = new LoginWatcher(this.eventDispatcher, this);
     this.vueStore = vueStore;
     this.wsUrl = UiController.serverWsUrl();
     this.wsConnection = new WsConnection(this.wsUrl, this);
     this.clientWatcher = new LcuClientWatcher(this.eventDispatcher);
 
-    // this.setupDebugLogging();
+    this.setupDebugLogging();
   }
 
   public static serverWsUrl(): string {
@@ -53,6 +54,17 @@ export class UiController
 
   /** The last reported state. */
   public state(): UiControllerState { return this.lastState; }
+
+  /** LCU connection wrapped in an LcuHelper.
+   *
+   * This throws an exception if the LCU client is not signed in.
+   */
+  public checkedLcu(): LcuHelper {
+    if (this.lcu === null) {
+      throw new Error(`LCU connection not available while ${this.lastState}`);
+    }
+    return this.lcu;
+  }
 
   public queueUp(): void {
     if (this.lastState !== 'ready') {
@@ -97,7 +109,7 @@ export class UiController
     console.log(`LoginWatcher state: ${state}`);
 
     if (state !== 'lcu-signedin') {
-      this.lcuConnection = null;
+      this.lcu = null;
       this.wsConnection.reset();
       this.setState(state);
       return;
@@ -105,7 +117,10 @@ export class UiController
 
     // When signed in, the state comes from the WebSocket connection.
     const newState = this.wsConnection.state();
-    this.lcuConnection = this.loginWatcher.connection();
+    // "as LcuConnection" is safe because loginWatcher's connection is only
+    // null when the state is 'offline'.
+    const lcuConnection = this.loginWatcher.connection() as LcuConnection;
+    this.lcu = new LcuHelper(lcuConnection);
     this.setState(newState);
     if (newState === 'challenged') {
       this.authenticate();  // Promise intentionally ignored.
@@ -117,48 +132,9 @@ export class UiController
     const summonerId = this.loginWatcher.summonerId().toString();
 
     const token = this.wsConnection.token();
-    await this.setVerificationToken(
-        this.lcuConnection as LcuConnection, summonerId, token as string);
+    await this.checkedLcu().setVerificationToken(summonerId, token as string);
 
     this.wsConnection.sendAuth(accountId, summonerId);
-  }
-
-  /** Used to authenticate the ownership of a League account to our server. */
-  private async setVerificationToken(
-      connection: LcuConnection, summonerId: string, token: string):
-      Promise<void> {
-    const url = `/lol-collections/v1/inventories/${summonerId}/verification`;
-    await connection.request('PUT', url, token);
-  }
-
-  /** Creates a notification in the League clinet (LCU). */
-  private async postNotification(
-      connection: LcuConnection, expiresInMs: (number | null) = null):
-      Promise<number> {
-    const now = Date.now();
-    const expires: string = (expiresInMs === null) ?
-        '' : new Date(now + expiresInMs).toISOString();
-    const notificationData = {
-      backgroundUrl: '',
-      created: (new Date()).toISOString(),
-      critical: true,
-      data: { mission_title: 'Figure Out LCU' },
-      detailKey: 'new_mission_details',
-      dismissible: true,
-      expires,
-      iconUrl: 'https://www.google.com/chrome/static/images/chrome-logo.svg',
-      id: 0,
-      source: '',
-      state: 'unread',
-      titleKey: 'new_mission_title',
-      type: 'mission',
-    };
-    const newNotification =
-        await connection.request('POST',
-                                 '/player-notifications/v1/notifications',
-                                 notificationData);
-    const notificationId: number = newNotification.id;
-    return notificationId;
   }
 
   private async setupMatch(): Promise<void> {
@@ -170,14 +146,28 @@ export class UiController
 
     // Only the first player is responsible for setting up the game.
     const firstPlayer = playerInfos[0];
-    const accountId = this.loginWatcher.accountId().toString();
-    if (firstPlayer.account_id !== accountId) {
+    const ourAccountId = this.loginWatcher.accountId();
+    if (firstPlayer.account_id !== ourAccountId.toString()) {
       return;
     }
 
     // Actually set up the match.
-    console.log('Should set up the match');
-    console.log(playerInfos);
+    const lcu = this.checkedLcu();
+    await lcu.createLobby(400);  // 400 is draft, 430 is blind.
+
+    // Invite players to the lobby.
+    for (const playerInfo of playerInfos) {
+      // LCU only deals with integers, so this had better be an integer.
+      const accountId = parseInt(playerInfo.account_id, 10);
+      if (accountId === ourAccountId) {
+        continue;
+      }
+      const summonerId = parseInt(playerInfo.summoner_id, 10);
+      await lcu.sendLobbyInvite(summonerId, playerInfo.summoner_name);
+    }
+
+    // Choose positions.
+    await lcu.setLobbyPreferredRoles([playerInfos[0].role]);
   }
 
   /** FSM update logic. */
