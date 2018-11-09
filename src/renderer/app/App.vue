@@ -32,13 +32,18 @@
       }
     },
     computed: {
-      clientConnected() {
+      connectedToLcu() {
         const lcuStatus = this.$store.state.lcu.status;
         const disconnectedStates = ['lcu-offline', 'connecting', 'challenged'];
         return !disconnectedStates.includes(lcuStatus);
       },
+      connectedToServer() {
+        const lcuStatus = this.$store.state.lcu.status;
+        const connectedStates = ['ready', 'queued', 'matched'];
+        return connectedStates.includes(lcuStatus);
+      },
       backgroundImageUrl() {
-        if (this.clientConnected) {
+        if (this.connectedToLcu) {
           return this.connectedImageUrl;
         } else {
           return this.disconnectedImageUrl;
@@ -68,7 +73,7 @@ body {
       </el-row>
     </el-header>
     <el-main>
-      <div v-if="clientConnected">
+      <div v-if="connectedToServer">
         <el-row type="flex" justify="center">
           <preference-form></preference-form>
         </el-row>
