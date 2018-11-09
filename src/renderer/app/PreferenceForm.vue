@@ -99,10 +99,11 @@
 
 <style lang="scss">
   #preference-form {
-    .el-form-item, .el-checkbox {
-      &__label {
-        color: black;
-      }
+    .el-form-item__label {
+      color: black;
+    }
+    .el-checkbox__input:not(.is-checked) + .el-checkbox__label {
+      color: white;
     }
   }
 </style>
@@ -110,6 +111,9 @@
 <style lang="scss" scoped>
   h2, p {
     text-align: center;
+  }
+  .el-checkbox {
+    background-color: rgba(0, 0, 0, 0.25);
   }
   .el-slider {
     width: 500px;
