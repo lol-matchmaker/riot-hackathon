@@ -6,6 +6,7 @@
   import { languages } from './languages';
   import lang from 'element-ui/lib/locale/lang/en';
   import locale from 'element-ui/lib/locale';
+  import QueueButton from './QueueButton';
 
   locale.use(lang)
 
@@ -19,6 +20,9 @@
 
   export default {
     name: 'preference-form',
+    components: {
+      QueueButton
+    },
     data () {
       return {
         archetypes,
@@ -121,7 +125,7 @@
 
     <el-form-item>
       <el-button type="primary" plain>Save</el-button>
-      <el-button type="primary">Find Team</el-button>
+      <queue-button></queue-button>
     </el-form-item>
   </el-form>
 </template>

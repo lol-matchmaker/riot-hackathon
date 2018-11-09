@@ -66,7 +66,7 @@ export class UiController
     return this.lcu;
   }
 
-  public queueUp(): void {
+  public enterQueue(): void {
     if (this.lastState !== 'ready') {
       return;
     }
