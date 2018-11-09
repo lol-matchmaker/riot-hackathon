@@ -54,6 +54,13 @@ export class UiController
   /** The last reported state. */
   public state(): UiControllerState { return this.lastState; }
 
+  public queueUp(): void {
+    if (this.lastState !== 'ready') {
+      return;
+    }
+    this.wsConnection.requestQueue();
+  }
+
   public setupDebugLogging(): void {
     this.eventDispatcher.addListener(
         'OnJsonApiEvent', (_: string, payload: any) => {
