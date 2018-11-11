@@ -1,8 +1,8 @@
 {
-  "name": "lolhack-app",
+  "name": "riot-hackathon",
   "version": "0.1.0",
-  "author": "Victor Costan <victor@costan.us>",
   "description": "Electron app that hooks into the new LoL client (LCU)",
+  "private": true,
   "keywords": [
     "lcu",
     "league",
@@ -11,10 +11,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pwnall/lolhack-app.git"
+    "url": "https://github.com/lol-matchmaker/riot-hackathon.git"
   },
   "bugs": {
-    "url": "https://github.com/pwnall/lolhack-app/issues"
+    "url": "https://github.com/lol-matchmaker/riot-hackathon/issues"
   },
   "dependencies": {
     "electron-updater": "^3.1.6",
